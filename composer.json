@@ -1,0 +1,30 @@
+{
+    "name"        : "jeromeklam/freepm",
+    "type"        : "library",
+    "description" : "Free PHP Project Management",
+    "keywords"    : ["FREE", "PROJECT", "PHP"],
+    "homepage"    : "http://github.com/jeromeklam",
+    "license"     : "LGPL-3.0-only",
+    "authors" : [
+        {
+            "name"  : "KLAM Jérôme",
+            "email" : "jeromeklam@free.fr"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require" : {
+        "php"                                  : ">=7.0",
+        "phing/phing"                          : "*",
+        "jeromeklam/freefw"                    : "*",
+        "psr/log"                              : "*"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "FreePM\\" : "src/FreePM/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.4",
+        "guzzlehttp/guzzle": "~6.0"
+    }
+}
