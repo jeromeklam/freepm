@@ -35,9 +35,9 @@ abstract class Project extends \FreeFW\Core\StorageModel
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['grp_id' => 
+        FFCST::PROPERTY_FK      => ['grp_id' =>
             [
-                FFCST::FOREIGN_MODEL => 'NS::Model::ModelName',
+                FFCST::FOREIGN_MODEL => 'FreeSSO::Model::Group',
                 FFCST::FOREIGN_FIELD => 'grp_id',
                 FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
             ]
