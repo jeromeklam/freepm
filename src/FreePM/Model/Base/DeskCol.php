@@ -40,6 +40,12 @@ abstract class DeskCol extends \FreePM\Model\StorageModel\DeskCol
     protected $deco_name = null;
 
     /**
+     * deco_position
+     * @var int
+     */
+    protected $deco_position = null;
+
+    /**
      * Set deco_id
      *
      * @param int $p_value
@@ -152,5 +158,28 @@ abstract class DeskCol extends \FreePM\Model\StorageModel\DeskCol
     public function getDecoName()
     {
         return $this->deco_name;
+    }
+
+    /**
+     * Set deco_position
+     *
+     * @param int $p_value
+     *
+     * @return \FreePM\Model\DeskCol
+     */
+    public function setDecoPosition($p_value)
+    {
+        $this->deco_position = $p_value;
+        return $this;
+    }
+
+    /**
+     * Get deco_position
+     *
+     * @return int
+     */
+    public function getDecoPosition()
+    {
+        return $this->deco_position;
     }
 }

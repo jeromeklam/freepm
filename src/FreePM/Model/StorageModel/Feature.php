@@ -8,7 +8,7 @@ use \FreeFW\Constants as FFCST;
  *
  * @author jeromeklam
  */
-abstract class Feature extends \FreeFW\Core\StorageModel
+abstract class Feature extends \FreePM\Model\StorageModel\Base
 {
 
     /**
@@ -32,16 +32,9 @@ abstract class Feature extends \FreeFW\Core\StorageModel
     protected static $PRP_GRP_ID = [
         FFCST::PROPERTY_PRIVATE => 'grp_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
-        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_GROUP],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['grp_id' =>
-            [
-                FFCST::FOREIGN_MODEL => 'FreeSSO::Model::Group',
-                FFCST::FOREIGN_FIELD => 'grp_id',
-                FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
-            ]
-        ],
     ];
     protected static $PRP_PRJ_ID = [
         FFCST::PROPERTY_PRIVATE => 'prj_id',
@@ -49,7 +42,7 @@ abstract class Feature extends \FreeFW\Core\StorageModel
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['prj_id' =>
+        FFCST::PROPERTY_FK      => ['project' =>
             [
                 FFCST::FOREIGN_MODEL => 'FreePM::Model::Project',
                 FFCST::FOREIGN_FIELD => 'prj_id',
@@ -74,7 +67,7 @@ abstract class Feature extends \FreeFW\Core\StorageModel
     ];
     protected static $PRP_FEAT_DESC = [
         FFCST::PROPERTY_PRIVATE => 'feat_desc',
-        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BLOB,
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_TEXT,
         FFCST::PROPERTY_OPTIONS => [],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => '',
@@ -99,7 +92,7 @@ abstract class Feature extends \FreeFW\Core\StorageModel
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['sta_id' =>
+        FFCST::PROPERTY_FK      => ['status' =>
             [
                 FFCST::FOREIGN_MODEL => 'FreePM::Model::Status',
                 FFCST::FOREIGN_FIELD => 'sta_id',

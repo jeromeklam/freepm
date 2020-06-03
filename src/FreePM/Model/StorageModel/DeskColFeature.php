@@ -4,74 +4,58 @@ namespace FreePM\Model\StorageModel;
 use \FreeFW\Constants as FFCST;
 
 /**
- * DeskCol
+ * DeskColFeature
  *
  * @author jeromeklam
  */
-abstract class DeskCol extends \FreePM\Model\StorageModel\Base
+abstract class DeskColFeature extends \FreePM\Model\StorageModel\Base
 {
 
     /**
      * Field properties as static arrays
      * @var array
      */
-    protected static $PRP_DECO_ID = [
-        FFCST::PROPERTY_PRIVATE => 'deco_id',
+    protected static $PRP_DCF_ID = [
+        FFCST::PROPERTY_PRIVATE => 'dcf_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_PK],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => 123,
     ];
-    protected static $PRP_BRK_ID = [
-        FFCST::PROPERTY_PRIVATE => 'brk_id',
-        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
-        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_BROKER],
-        FFCST::PROPERTY_COMMENT => '',
-        FFCST::PROPERTY_SAMPLE  => 123,
-    ];
-    protected static $PRP_GRP_ID = [
-        FFCST::PROPERTY_PRIVATE => 'grp_id',
+    protected static $PRP_DECO_ID = [
+        FFCST::PROPERTY_PRIVATE => 'deco_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['grp_id' =>
+        FFCST::PROPERTY_FK      => ['desk_col' =>
             [
-                FFCST::FOREIGN_MODEL => 'FreeSSO::Model::Group',
-                FFCST::FOREIGN_FIELD => 'grp_id',
+                FFCST::FOREIGN_MODEL => 'FreePM::Model::DeskCol',
+                FFCST::FOREIGN_FIELD => 'deco_id',
                 FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
             ]
         ],
     ];
-    protected static $PRP_DESK_ID = [
-        FFCST::PROPERTY_PRIVATE => 'desk_id',
+    protected static $PRP_FEAT_ID = [
+        FFCST::PROPERTY_PRIVATE => 'feat_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['desk_id' =>
+        FFCST::PROPERTY_FK      => ['feature' =>
             [
-                FFCST::FOREIGN_MODEL => 'FreePM::Model::Desk',
-                FFCST::FOREIGN_FIELD => 'desk_id',
+                FFCST::FOREIGN_MODEL => 'FreePM::Model::Feature',
+                FFCST::FOREIGN_FIELD => 'feat_id',
                 FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
             ]
         ],
     ];
-    protected static $PRP_DECO_NAME = [
-        FFCST::PROPERTY_PRIVATE => 'deco_name',
-        FFCST::PROPERTY_TYPE    => FFCST::TYPE_STRING,
-        FFCST::PROPERTY_OPTIONS => [],
-        FFCST::PROPERTY_COMMENT => 'Nom de la colonne',
-        FFCST::PROPERTY_MAX     => 80,
-        FFCST::PROPERTY_SAMPLE  => 'Todo',
-    ];
-    protected static $PRP_DECO_POSITION = [
-        FFCST::PROPERTY_PRIVATE => 'deco_POSITION',
+    protected static $PRP_DCF_POSITION = [
+        FFCST::PROPERTY_PRIVATE => 'dcf_position',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_INTEGER,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED],
-        FFCST::PROPERTY_DEFAULT => 1,
-        FFCST::PROPERTY_COMMENT => 'Position de la colonne',
-        FFCST::PROPERTY_SAMPLE  => 1,
+        FFCST::PROPERTY_COMMENT => '',
+        FFCST::PROPERTY_SAMPLE  => 123,
     ];
 
     /**
@@ -82,11 +66,10 @@ abstract class DeskCol extends \FreePM\Model\StorageModel\Base
     public static function getProperties()
     {
         return [
-            'deco_id'   => self::$PRP_DECO_ID,
-            'brk_id'    => self::$PRP_BRK_ID,
-            'grp_id'    => self::$PRP_GRP_ID,
-            'desk_id'   => self::$PRP_DESK_ID,
-            'deco_name' => self::$PRP_DECO_NAME
+            'dcf_id'       => self::$PRP_DCF_ID,
+            'deco_id'      => self::$PRP_DECO_ID,
+            'feat_id'      => self::$PRP_FEAT_ID,
+            'dcf_position' => self::$PRP_DCF_POSITION
         ];
     }
 
@@ -97,7 +80,7 @@ abstract class DeskCol extends \FreePM\Model\StorageModel\Base
      */
     public static function getSource()
     {
-        return 'pm_desk_col';
+        return 'pm_desk_col_feature';
     }
 
     /**

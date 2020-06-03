@@ -1,0 +1,1 @@
+ALTER TABLE `pm_desk_col` ADD `deco_position` int(11) NOT NULL DEFAULT 0;

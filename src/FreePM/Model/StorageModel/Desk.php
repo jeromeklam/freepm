@@ -8,7 +8,7 @@ use \FreeFW\Constants as FFCST;
  *
  * @author jeromeklam
  */
-abstract class Desk extends \FreeFW\Core\StorageModel
+abstract class Desk extends \FreePM\Model\StorageModel\Base
 {
 
     /**
