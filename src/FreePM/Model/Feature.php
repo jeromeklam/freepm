@@ -10,4 +10,10 @@ use \FreeFW\Constants as FFCST;
  */
 class Feature extends \FreePM\Model\Base\Feature
 {
+
+    /**
+     * Behaviour
+     */
+    use \FreePM\Model\Behaviour\Project;
+    use \FreePM\Model\Behaviour\Status;
 }
