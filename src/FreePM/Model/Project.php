@@ -10,4 +10,9 @@ use \FreeFW\Constants as FFCST;
  */
 class Project extends \FreePM\Model\Base\Project
 {
+
+    /**
+     * Behaviour
+     */
+    use \FreeSSO\Model\Behaviour\Group;
 }
