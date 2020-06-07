@@ -12,6 +12,6 @@ $localRoutes = array_merge(
     $routes_desk_col_feature,
     $routes_feature,
     $routes_project,
-    $routes_status,
+    $routes_status
 );
 return $localRoutes;
