@@ -35,7 +35,7 @@ abstract class Desk extends \FreePM\Model\StorageModel\Base
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['grp_id' =>
+        FFCST::PROPERTY_FK      => ['group' =>
             [
                 FFCST::FOREIGN_MODEL => 'FreeSSO::Model::Group',
                 FFCST::FOREIGN_FIELD => 'grp_id',
@@ -49,7 +49,7 @@ abstract class Desk extends \FreePM\Model\StorageModel\Base
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['user_id' =>
+        FFCST::PROPERTY_FK      => ['user' =>
             [
                 FFCST::FOREIGN_MODEL => 'FreeSSO::Model::User',
                 FFCST::FOREIGN_FIELD => 'user_id',
@@ -67,7 +67,7 @@ abstract class Desk extends \FreePM\Model\StorageModel\Base
     ];
     protected static $PRP_DESK_DESC = [
         FFCST::PROPERTY_PRIVATE => 'desk_desc',
-        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BLOB,
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_TEXT,
         FFCST::PROPERTY_OPTIONS => [],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => '',
