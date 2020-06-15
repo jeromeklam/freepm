@@ -66,7 +66,7 @@ abstract class DeskCol extends \FreePM\Model\StorageModel\Base
         FFCST::PROPERTY_SAMPLE  => 'Todo',
     ];
     protected static $PRP_DECO_POSITION = [
-        FFCST::PROPERTY_PRIVATE => 'deco_POSITION',
+        FFCST::PROPERTY_PRIVATE => 'deco_position',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_INTEGER,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED],
         FFCST::PROPERTY_DEFAULT => 1,
@@ -82,11 +82,12 @@ abstract class DeskCol extends \FreePM\Model\StorageModel\Base
     public static function getProperties()
     {
         return [
-            'deco_id'   => self::$PRP_DECO_ID,
-            'brk_id'    => self::$PRP_BRK_ID,
-            'grp_id'    => self::$PRP_GRP_ID,
-            'desk_id'   => self::$PRP_DESK_ID,
-            'deco_name' => self::$PRP_DECO_NAME
+            'deco_id'       => self::$PRP_DECO_ID,
+            'brk_id'        => self::$PRP_BRK_ID,
+            'grp_id'        => self::$PRP_GRP_ID,
+            'desk_id'       => self::$PRP_DESK_ID,
+            'deco_name'     => self::$PRP_DECO_NAME,
+            'deco_position' => self::$PRP_DECO_POSITION
         ];
     }
 

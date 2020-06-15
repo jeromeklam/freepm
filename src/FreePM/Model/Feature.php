@@ -16,4 +16,5 @@ class Feature extends \FreePM\Model\Base\Feature
      */
     use \FreePM\Model\Behaviour\Project;
     use \FreePM\Model\Behaviour\Status;
+    use \FreeSSO\Model\Behaviour\Group;
 }

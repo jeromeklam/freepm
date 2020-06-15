@@ -32,9 +32,16 @@ abstract class Feature extends \FreePM\Model\StorageModel\Base
     protected static $PRP_GRP_ID = [
         FFCST::PROPERTY_PRIVATE => 'grp_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
-        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_GROUP],
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => 123,
+        FFCST::PROPERTY_FK      => ['group' =>
+            [
+                FFCST::FOREIGN_MODEL => 'FreeSSO::Model::Group',
+                FFCST::FOREIGN_FIELD => 'grp_id',
+                FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
+            ]
+        ],
     ];
     protected static $PRP_PRJ_ID = [
         FFCST::PROPERTY_PRIVATE => 'prj_id',
