@@ -5,7 +5,9 @@
 	<buildpathentry combineaccessrules="false" kind="prj" path="/freefw"/>
 	<buildpathentry combineaccessrules="false" kind="prj" path="/guzzle"/>
 	<buildpathentry combineaccessrules="false" kind="prj" path="/http-server-middleware"/>
+	<buildpathentry external="true" kind="lib" path="E:/PHP/freesso"/>
 	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
+	<buildpathentry external="true" kind="lib" path="E:/PHP/freefw"/>
 	<buildpathentry combineaccessrules="false" kind="prj" path="/log"/>
 	<buildpathentry combineaccessrules="false" kind="prj" path="/http-middleware"/>
 	<buildpathentry combineaccessrules="false" kind="prj" path="/http-server-handler"/>
