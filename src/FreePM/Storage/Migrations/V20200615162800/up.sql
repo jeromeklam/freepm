@@ -1,0 +1,1 @@
+ALTER TABLE `pm_feature` CHANGE `sta_priority` `feat_priority` tinyint(4) NOT NULL DEFAULT 9;

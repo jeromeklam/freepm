@@ -10,4 +10,9 @@ use \FreeFW\Constants as FFCST;
  */
 class Status extends \FreePM\Model\Base\Status
 {
+
+    /**
+     * Behaviour
+     */
+    use \FreeSSO\Model\Behaviour\Group;
 }

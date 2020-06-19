@@ -70,10 +70,10 @@ abstract class Feature extends \FreePM\Model\StorageModel\Feature
     protected $sta_id = null;
 
     /**
-     * sta_priority
+     * feat_priority
      * @var int
      */
-    protected $sta_priority = null;
+    protected $feat_priority = null;
 
     /**
      * Set feat_id
@@ -306,25 +306,25 @@ abstract class Feature extends \FreePM\Model\StorageModel\Feature
     }
 
     /**
-     * Set sta_priority
+     * Set feat_priority
      *
      * @param int $p_value
      *
      * @return \FreePM\Model\Feature
      */
-    public function setStaPriority($p_value)
+    public function setFeatPriority($p_value)
     {
-        $this->sta_priority = $p_value;
+        $this->feat_priority = $p_value;
         return $this;
     }
 
     /**
-     * Get sta_priority
+     * Get feat_priority
      *
      * @return int
      */
-    public function getStaPriority()
+    public function getFeatPriority()
     {
-        return $this->sta_priority;
+        return $this->feat_priority;
     }
 }

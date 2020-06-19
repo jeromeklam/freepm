@@ -107,12 +107,13 @@ abstract class Feature extends \FreePM\Model\StorageModel\Base
             ]
         ],
     ];
-    protected static $PRP_STA_PRIORITY = [
-        FFCST::PROPERTY_PRIVATE => 'sta_priority',
+    protected static $PRP_FEAT_PRIORITY = [
+        FFCST::PROPERTY_PRIVATE => 'feat_priority',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_INTEGER,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED],
-        FFCST::PROPERTY_COMMENT => '',
-        FFCST::PROPERTY_SAMPLE  => 123,
+        FFCST::PROPERTY_COMMENT => 'Priorité, de 1 à 9, 9 étant le moins important',
+        FFCST::PROPERTY_DEFAULT => 9,
+        FFCST::PROPERTY_SAMPLE  => 3,
     ];
 
     /**
@@ -123,17 +124,17 @@ abstract class Feature extends \FreePM\Model\StorageModel\Base
     public static function getProperties()
     {
         return [
-            'feat_id'      => self::$PRP_FEAT_ID,
-            'brk_id'       => self::$PRP_BRK_ID,
-            'grp_id'       => self::$PRP_GRP_ID,
-            'prj_id'       => self::$PRP_PRJ_ID,
-            'feat_ts'      => self::$PRP_FEAT_TS,
-            'feat_short'   => self::$PRP_FEAT_SHORT,
-            'feat_desc'    => self::$PRP_FEAT_DESC,
-            'feat_from'    => self::$PRP_FEAT_FROM,
-            'feat_to'      => self::$PRP_FEAT_TO,
-            'sta_id'       => self::$PRP_STA_ID,
-            'sta_priority' => self::$PRP_STA_PRIORITY
+            'feat_id'       => self::$PRP_FEAT_ID,
+            'brk_id'        => self::$PRP_BRK_ID,
+            'grp_id'        => self::$PRP_GRP_ID,
+            'prj_id'        => self::$PRP_PRJ_ID,
+            'feat_ts'       => self::$PRP_FEAT_TS,
+            'feat_short'    => self::$PRP_FEAT_SHORT,
+            'feat_desc'     => self::$PRP_FEAT_DESC,
+            'feat_from'     => self::$PRP_FEAT_FROM,
+            'feat_to'       => self::$PRP_FEAT_TO,
+            'sta_id'        => self::$PRP_STA_ID,
+            'feat_priority' => self::$PRP_FEAT_PRIORITY
         ];
     }
 
