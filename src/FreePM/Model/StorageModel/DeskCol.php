@@ -49,7 +49,7 @@ abstract class DeskCol extends \FreePM\Model\StorageModel\Base
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['desk_id' =>
+        FFCST::PROPERTY_FK      => ['desk' =>
             [
                 FFCST::FOREIGN_MODEL => 'FreePM::Model::Desk',
                 FFCST::FOREIGN_FIELD => 'desk_id',

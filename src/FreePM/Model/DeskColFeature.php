@@ -68,4 +68,31 @@ class DeskColFeature extends \FreePM\Model\Base\DeskColFeature
     {
         return $this->feature;
     }
+
+    /**
+     * Before Create
+     *
+     * @return boolean
+     */
+    public function beforeCreate()
+    {
+        /**
+         * @var \FreePM\Model\DeskColFeature $deskColF
+         */
+        $deskColF = \FreeFW\DI\DI::get('FreePW::Model::DeskColFeature');
+        $deskColF = \FreePM\Model\DeskColFeature::findFirst(
+            [
+                'deco_id' => $this->getDecoId()
+            ],
+            [
+                'dcf_position' => \FreeFW\Storage\Storage::SORT_DESC
+            ]
+        );
+        if ($deskColF) {
+            $this->setDcfPosition($deskColF->getDcfPosition() + 1);
+        } else {
+            $this->setDcfPosition(1);
+        }
+        return true;
+    }
 }

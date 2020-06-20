@@ -8,6 +8,47 @@ use \FreeFW\Router\Route as FFCSTRT;
  * @author jeromeklam
  */
 $routes_desk_col_feature = [
+    'free_p_m.desk_col_feature.moveone' => [
+        FFCSTRT::ROUTE_COLLECTION => 'FreePM/PrjMgnt/DeskColFeature',
+        FFCSTRT::ROUTE_COMMENT    => 'Modifie un objet',
+        FFCSTRT::ROUTE_METHOD     => FFCSTRT::METHOD_PUT,
+        FFCSTRT::ROUTE_MODEL      => 'FreePM::Model::DeskColFeature',
+        FFCSTRT::ROUTE_URL        => '/v1/prj_mgnt/desk_col_feature/:dcf_id/move/:deco_id/:position',
+        FFCSTRT::ROUTE_CONTROLLER => 'FreePM::Controller::DeskColFeature',
+        FFCSTRT::ROUTE_FUNCTION   => 'moveOne',
+        FFCSTRT::ROUTE_ROLE       => \FreeFW\Router\Route::ROLE_UPDATE_ONE,
+        FFCSTRT::ROUTE_AUTH       => FFCSTRT::AUTH_IN,
+        FFCSTRT::ROUTE_MIDDLEWARE => [],
+        FFCSTRT::ROUTE_INCLUDE    => [],
+        FFCSTRT::ROUTE_SCOPE      => [],
+        FFCSTRT::ROUTE_PARAMETERS => [
+            'dcf_id' => [
+                FFCSTRT::ROUTE_PARAMETER_ORIGIN   => FFCSTRT::ROUTE_PARAMETER_ORIGIN_PATH,
+                FFCSTRT::ROUTE_PARAMETER_TYPE     => FFCST::TYPE_BIGINT,
+                FFCSTRT::ROUTE_PARAMETER_REQUIRED => true,
+                FFCSTRT::ROUTE_PARAMETER_COMMENT  => 'Identifiant de l\'objet'
+            ],
+            'deco_id' => [
+                FFCSTRT::ROUTE_PARAMETER_ORIGIN   => FFCSTRT::ROUTE_PARAMETER_ORIGIN_PATH,
+                FFCSTRT::ROUTE_PARAMETER_TYPE     => FFCST::TYPE_BIGINT,
+                FFCSTRT::ROUTE_PARAMETER_REQUIRED => true,
+                FFCSTRT::ROUTE_PARAMETER_COMMENT  => 'Identifiant de la colonne de destination'
+            ],
+            'position' => [
+                FFCSTRT::ROUTE_PARAMETER_ORIGIN   => FFCSTRT::ROUTE_PARAMETER_ORIGIN_PATH,
+                FFCSTRT::ROUTE_PARAMETER_TYPE     => FFCST::TYPE_INTEGER,
+                FFCSTRT::ROUTE_PARAMETER_REQUIRED => true,
+                FFCSTRT::ROUTE_PARAMETER_COMMENT  => 'Position dans la colonne'
+            ],
+        ],
+        FFCSTRT::ROUTE_RESULTS    => [
+            '200' => [
+                FFCSTRT::ROUTE_RESULTS_TYPE    => FFCSTRT::RESULT_OBJECT,
+                FFCSTRT::ROUTE_RESULTS_MODEL   => 'FreePM::Model::DeskColFeature',
+                FFCSTRT::ROUTE_RESULTS_COMMENT => 'Objet modifié',
+            ],
+        ]
+    ],
     'free_p_m.desk_col_feature.autocomplete' => [
         FFCSTRT::ROUTE_COLLECTION => 'FreePM/PrjMgnt/DeskColFeature',
         FFCSTRT::ROUTE_COMMENT    => 'Autocomplete.',

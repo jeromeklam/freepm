@@ -8,6 +8,41 @@ use \FreeFW\Router\Route as FFCSTRT;
  * @author jeromeklam
  */
 $routes_desk_col = [
+    'free_p_m.desk_col.moveone' => [
+        FFCSTRT::ROUTE_COLLECTION => 'FreePM/PrjMgnt/DeskCol',
+        FFCSTRT::ROUTE_COMMENT    => 'Modifie un objet',
+        FFCSTRT::ROUTE_METHOD     => FFCSTRT::METHOD_PUT,
+        FFCSTRT::ROUTE_MODEL      => 'FreePM::Model::DeskCol',
+        FFCSTRT::ROUTE_URL        => '/v1/prj_mgnt/desk_col/:deco_id/move/:position',
+        FFCSTRT::ROUTE_CONTROLLER => 'FreePM::Controller::DeskCol',
+        FFCSTRT::ROUTE_FUNCTION   => 'moveOne',
+        FFCSTRT::ROUTE_ROLE       => \FreeFW\Router\Route::ROLE_UPDATE_ONE,
+        FFCSTRT::ROUTE_AUTH       => FFCSTRT::AUTH_IN,
+        FFCSTRT::ROUTE_MIDDLEWARE => [],
+        FFCSTRT::ROUTE_INCLUDE    => [],
+        FFCSTRT::ROUTE_SCOPE      => [],
+        FFCSTRT::ROUTE_PARAMETERS => [
+            'deco_id' => [
+                FFCSTRT::ROUTE_PARAMETER_ORIGIN   => FFCSTRT::ROUTE_PARAMETER_ORIGIN_PATH,
+                FFCSTRT::ROUTE_PARAMETER_TYPE     => FFCST::TYPE_BIGINT,
+                FFCSTRT::ROUTE_PARAMETER_REQUIRED => true,
+                FFCSTRT::ROUTE_PARAMETER_COMMENT  => 'Identifiant de l\'objet'
+            ],
+            'posotion' => [
+                FFCSTRT::ROUTE_PARAMETER_ORIGIN   => FFCSTRT::ROUTE_PARAMETER_ORIGIN_PATH,
+                FFCSTRT::ROUTE_PARAMETER_TYPE     => FFCST::TYPE_INTEGER,
+                FFCSTRT::ROUTE_PARAMETER_REQUIRED => true,
+                FFCSTRT::ROUTE_PARAMETER_COMMENT  => 'Nouvelle position'
+            ],
+        ],
+        FFCSTRT::ROUTE_RESULTS    => [
+            '200' => [
+                FFCSTRT::ROUTE_RESULTS_TYPE    => FFCSTRT::RESULT_OBJECT,
+                FFCSTRT::ROUTE_RESULTS_MODEL   => 'FreePM::Model::DeskCol',
+                FFCSTRT::ROUTE_RESULTS_COMMENT => 'Objet modifié',
+            ],
+        ]
+    ],
     'free_p_m.desk_col.autocomplete' => [
         FFCSTRT::ROUTE_COLLECTION => 'FreePM/PrjMgnt/DeskCol',
         FFCSTRT::ROUTE_COMMENT    => 'Autocomplete.',
