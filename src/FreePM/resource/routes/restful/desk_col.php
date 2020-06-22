@@ -28,7 +28,7 @@ $routes_desk_col = [
                 FFCSTRT::ROUTE_PARAMETER_REQUIRED => true,
                 FFCSTRT::ROUTE_PARAMETER_COMMENT  => 'Identifiant de l\'objet'
             ],
-            'posotion' => [
+            'position' => [
                 FFCSTRT::ROUTE_PARAMETER_ORIGIN   => FFCSTRT::ROUTE_PARAMETER_ORIGIN_PATH,
                 FFCSTRT::ROUTE_PARAMETER_TYPE     => FFCST::TYPE_INTEGER,
                 FFCSTRT::ROUTE_PARAMETER_REQUIRED => true,
