@@ -29,15 +29,17 @@ class DeskCol extends \FreeFW\Core\ApiController
                 $oldPos   = $deskCol->getDecoPosition();
                 if ($deskCol->isValid()) {
                     if ($oldPos < $p_position) {
-                        $deskCol->setDecoPosition(-1 * $deskCol->getDecoId())->save;
+                        $deskCol
+                            ->setDecoPosition(-1 * $deskCol->getDecoId())
+                            ->save()
+                        ;
                         \FreePM\Model\DeskCol::update(
                             [
                                 'deco_position' => [ 'noescape' => 'deco_position - 1']
                             ],
                             [
                                 'desk_id'       => [ 'eq' => $deskCol->getDeskId() ],
-                                'deco_position' => [ \FreeFW\Storage\Storage::COND_GREATER => $oldPos ],
-                                'deco_position' => [ \FreeFW\Storage\Storage::COND_LOWER_EQUAL => $p_position ]
+                                'deco_position' => [ \FreeFW\Storage\Storage::COND_BETWEEN => [$oldPos, $p_position] ]
                             ]
                         );
                         $deskCol
@@ -49,7 +51,10 @@ class DeskCol extends \FreeFW\Core\ApiController
                         }
                     } else {
                         if ($oldPos > $p_position) {
-                            $deskCol->setDecoPosition(-1 * $deskCol->getDecoId())->save;
+                            $deskCol
+                                ->setDecoPosition(-1 * $deskCol->getDecoId())
+                                ->save()
+                            ;
                             \FreePM\Model\DeskCol::update(
                                 [
                                     'deco_position' => [ 'noescape' => 'deco_position + 1']
