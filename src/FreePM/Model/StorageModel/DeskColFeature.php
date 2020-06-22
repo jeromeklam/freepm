@@ -54,6 +54,7 @@ abstract class DeskColFeature extends \FreePM\Model\StorageModel\Base
         FFCST::PROPERTY_PRIVATE => 'dcf_position',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_INTEGER,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED],
+        FFCST::PROPERTY_DEFAULT => 1,
         FFCST::PROPERTY_COMMENT => '',
         FFCST::PROPERTY_SAMPLE  => 123,
     ];

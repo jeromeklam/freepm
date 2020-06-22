@@ -79,7 +79,7 @@ class DeskColFeature extends \FreePM\Model\Base\DeskColFeature
         /**
          * @var \FreePM\Model\DeskColFeature $deskColF
          */
-        $deskColF = \FreeFW\DI\DI::get('FreePW::Model::DeskColFeature');
+        $deskColF = \FreeFW\DI\DI::get('FreePM::Model::DeskColFeature');
         $deskColF = \FreePM\Model\DeskColFeature::findFirst(
             [
                 'deco_id' => $this->getDecoId()

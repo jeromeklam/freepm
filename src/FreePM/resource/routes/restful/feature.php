@@ -72,7 +72,7 @@ $routes_feature = [
         FFCSTRT::ROUTE_AUTH       => FFCSTRT::AUTH_IN,
         FFCSTRT::ROUTE_MIDDLEWARE => [],
         FFCSTRT::ROUTE_INCLUDE    => [
-            FFCSTRT::ROUTE_INCLUDE_DEFAULT => ['project', 'status']
+            FFCSTRT::ROUTE_INCLUDE_DEFAULT => ['project', 'status', 'group']
         ],
         FFCSTRT::ROUTE_SCOPE      => [],
         FFCSTRT::ROUTE_PARAMETERS => [
@@ -103,7 +103,7 @@ $routes_feature = [
         FFCSTRT::ROUTE_AUTH       => FFCSTRT::AUTH_IN,
         FFCSTRT::ROUTE_MIDDLEWARE => [],
         FFCSTRT::ROUTE_INCLUDE    => [
-            FFCSTRT::ROUTE_INCLUDE_DEFAULT => ['project', 'status']
+            FFCSTRT::ROUTE_INCLUDE_DEFAULT => ['project', 'status', 'group']
         ],
         FFCSTRT::ROUTE_SCOPE      => [],
         FFCSTRT::ROUTE_RESULTS    => [
@@ -126,7 +126,7 @@ $routes_feature = [
         FFCSTRT::ROUTE_AUTH       => FFCSTRT::AUTH_IN,
         FFCSTRT::ROUTE_MIDDLEWARE => [],
         FFCSTRT::ROUTE_INCLUDE    => [
-            FFCSTRT::ROUTE_INCLUDE_DEFAULT => ['project', 'status']
+            FFCSTRT::ROUTE_INCLUDE_DEFAULT => ['project', 'status', 'group']
         ],
         FFCSTRT::ROUTE_SCOPE      => [],
         FFCSTRT::ROUTE_PARAMETERS => [

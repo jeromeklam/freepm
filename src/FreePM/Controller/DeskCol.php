@@ -27,31 +27,47 @@ class DeskCol extends \FreeFW\Core\ApiController
             $deskCol = \FreePM\Model\DeskCol::findFirst(['deco_id' => $p_id]);
             if ($deskCol) {
                 $oldPos   = $deskCol->getDecoPosition();
-                $deskCol
-                    ->setDecoPosition($p_position)
-                ;
                 if ($deskCol->isValid()) {
-                    \FreePM\Model\DeskCol::update(
-                        [
-                            'deco_position' => [ 'noescape' => 'deco_position + 1']
-                        ],
-                        [
-                            'desk_id'       => [ 'eq' => $deskCol->getDeskId() ],
-                            'deco_position' => [ \FreeFW\Storage\Storage::COND_GREATER_EQUAL => $p_position ]
-                        ]
-                        );
-                    if ($deskCol->save()) {
-                        \FreePM\Model\DeskColFeature::update(
+                    if ($oldPos < $p_position) {
+                        $deskCol->setDecoPosition(-1 * $deskCol->getDecoId())->save;
+                        \FreePM\Model\DeskCol::update(
                             [
                                 'deco_position' => [ 'noescape' => 'deco_position - 1']
                             ],
                             [
                                 'desk_id'       => [ 'eq' => $deskCol->getDeskId() ],
-                                'deco_position' => [ \FreeFW\Storage\Storage::COND_GREATER => $oldPos ]
+                                'deco_position' => [ \FreeFW\Storage\Storage::COND_GREATER => $oldPos ],
+                                'deco_position' => [ \FreeFW\Storage\Storage::COND_LOWER_EQUAL => $p_position ]
                             ]
+                        );
+                        $deskCol
+                            ->setDecoPosition($p_position)
+                        ;
+                        if ($deskCol->save()) {
+                            $this->logger->debug('FreePM.DeskCol.moveOne.end');
+                            return $this->createResponse(200, $deskCol);
+                        }
+                    } else {
+                        if ($oldPos > $p_position) {
+                            $deskCol->setDecoPosition(-1 * $deskCol->getDecoId())->save;
+                            \FreePM\Model\DeskCol::update(
+                                [
+                                    'deco_position' => [ 'noescape' => 'deco_position + 1']
+                                ],
+                                [
+                                    'desk_id'       => [ 'eq' => $deskCol->getDeskId() ],
+                                    'deco_position' => [ \FreeFW\Storage\Storage::COND_GREATER => $p_position ],
+                                    'deco_position' => [ \FreeFW\Storage\Storage::COND_LOWER => $oldPos ]
+                                ]
                             );
-                        $this->logger->debug('FreePM.DeskCol.moveOne.end');
-                        return $this->createResponse(200, $deskCol);
+                            $deskCol
+                                ->setDecoPosition($p_position)
+                            ;
+                            if ($deskCol->save()) {
+                                $this->logger->debug('FreePM.DeskCol.moveOne.end');
+                                return $this->createResponse(200, $deskCol);
+                            }
+                        }
                     }
                 }
                 $this->logger->debug('FreePM.DeskCol.moveOne.end');
