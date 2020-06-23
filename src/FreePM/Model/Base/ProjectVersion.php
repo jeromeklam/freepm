@@ -43,7 +43,7 @@ abstract class ProjectVersion extends \FreePM\Model\StorageModel\ProjectVersion
      * prj_to
      * @var mixed
      */
-    protected $prjv_tp = null;
+    protected $prjv_to = null;
     /**
      * prj_to
      * @var bool
@@ -177,25 +177,25 @@ abstract class ProjectVersion extends \FreePM\Model\StorageModel\ProjectVersion
         return $this->prjv_from;
     }
     /**
-     * Set prjv_tp
+     * Set prjv_to
      *
      * @param mixed $p_value
      *
      * @return \FreePM\Model\ProjectVersion
      */
-    public function setPrjvTp($p_value)
+    public function setPrjvTo($p_value)
     {
-        $this->prjv_tp = $p_value;
+        $this->prjv_to = $p_value;
         return $this;
     }
     /**
-     * Get prjv_tp
+     * Get prjv_to
      *
      * @return mixed
      */
-    public function getPrjvTp()
+    public function getPrjvTo()
     {
-        return $this->prjv_tp;
+        return $this->prjv_to;
     }
     /**
      * Set prjv_beta_test

@@ -2,6 +2,7 @@
 namespace FreePM\Model\StorageModel;
 
 use \FreeFW\Constants as FFCST;
+use \FreePM\Constants as FPCST;
 
 /**
  * Project
@@ -129,5 +130,23 @@ abstract class Project extends \FreePM\Model\StorageModel\Base
     public static function getAutocompleteField()
     {
         return '';
+    }
+    /**
+     * Get uniq indexes
+     *
+     * @return array[]
+     */
+    public static function getUniqIndexes()
+    {
+        return [
+            'name' => [
+                FFCST::INDEX_FIELDS => 'prj_name',
+                FFCST::INDEX_EXISTS => FPCST::ERROR_PROJECT_NAME_EXISTS
+            ],
+            'code' => [
+                FFCST::INDEX_FIELDS => 'prj_code',
+                FFCST::INDEX_EXISTS => FPCST::ERROR_PROJECT_CODE_EXISTS
+            ]
+        ];
     }
 }
