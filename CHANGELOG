@@ -3,9 +3,6 @@
 * Migration : project_version.prjv_tp -> prjv_to
 * rajout d'une unicité sur la table project_version : une version est unique par projet
 * rajout d'une unicité sur la table project : le nom et le code sont uniques
-
-# 1.2.0 : --/--/2020
-
 * Migration
 * Commands
 * GIC import
