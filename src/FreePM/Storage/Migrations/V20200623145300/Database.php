@@ -1,5 +1,5 @@
 <?php
-namespace FreePM\Storage\Migrations\V20200615162800;
+namespace FreePM\Storage\Migrations\V20200623145300;
 
 /**
  *
