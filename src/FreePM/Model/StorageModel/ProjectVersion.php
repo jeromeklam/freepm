@@ -2,6 +2,7 @@
 namespace FreePM\Model\StorageModel;
 
 use \FreeFW\Constants as FFCST;
+use \FreePM\Constants as FPCST;
 
 /**
  * Project
@@ -68,8 +69,7 @@ abstract class ProjectVersion extends \FreePM\Model\StorageModel\Base
         FFCST::PROPERTY_SAMPLE  => '1983-01-01 00:00:00',
     ];
     protected static $PRP_PRJV_TO = [
-        FFCST::PROPERTY_PRIVATE => 'prjv_tp',
-        FFCST::PROPERTY_PUBLIC  => 'prjv_to',
+        FFCST::PROPERTY_PRIVATE => 'prjv_to',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_DATETIMETZ,
         FFCST::PROPERTY_OPTIONS => [],
         FFCST::PROPERTY_COMMENT => 'Fin de validité',
@@ -97,7 +97,7 @@ abstract class ProjectVersion extends \FreePM\Model\StorageModel\Base
             'prjv_type'         => self::$PRP_PRJV_TYPE,
             'prjv_version'      => self::$PRP_PRJV_VERSION,
             'prjv_from'         => self::$PRP_PRJV_FROM,
-            'prjv_tp'           => self::$PRP_PRJV_TO,
+            'prjv_to'           => self::$PRP_PRJV_TO,
             'prjv_beta_test'    => self::$PRP_PRJV_BETA_TEST
         ];
     }
@@ -127,5 +127,19 @@ abstract class ProjectVersion extends \FreePM\Model\StorageModel\Base
     public static function getAutocompleteField()
     {
         return '';
+    }
+    /**
+     * Get uniq indexes
+     *
+     * @return array[]
+     */
+    public static function getUniqIndexes()
+    {
+        return [
+            'version' => [
+                FFCST::INDEX_FIELDS => 'prj_id,prjv_version',
+                FFCST::INDEX_EXISTS => FPCST::ERROR_VERSION_NUMBER_EXISTS
+            ]
+        ];
     }
 }
