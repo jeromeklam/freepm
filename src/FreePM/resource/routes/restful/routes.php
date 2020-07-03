@@ -6,6 +6,7 @@ require_once __DIR__ . '/feature.php';
 require_once __DIR__ . '/project.php';
 require_once __DIR__ . '/status.php';
 require_once __DIR__ . '/project_version.php';
+require_once __DIR__ . '/project_version_file.php';
 
 $localRoutes = array_merge(
     $routes_desk,
@@ -14,7 +15,8 @@ $localRoutes = array_merge(
     $routes_feature,
     $routes_project,
     $routes_status,
-    $routes_project_version
+    $routes_project_version,
+    $routes_project_version_file
 );
 
 return $localRoutes;

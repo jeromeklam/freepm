@@ -149,4 +149,23 @@ abstract class Project extends \FreePM\Model\StorageModel\Base
             ]
         ];
     }
+
+    /**
+     * Get One To many relationShips
+     *
+     * @return array
+     */
+    public function getRelationships()
+    {
+        return [
+            'versions' => [
+                FFCST::REL_MODEL   => 'FreePM::Model::ProjectVersion',
+                FFCST::REL_FIELD   => 'prj_id',
+                FFCST::REL_TYPE    => \FreeFW\Model\Query::JOIN_LEFT,
+                FFCST::REL_COMMENT => 'Les versions d\'un projet',
+//              FFCST::REL_REMOVE  => FFCST::REL_REMOVE_CASCADE
+            ],
+        ];
+    }
+
 }

@@ -171,4 +171,33 @@ $routes_project = [
             ]
         ]
     ],
+    'free_p_m.project.lastversion' => [
+        FFCSTRT::ROUTE_COLLECTION => 'FreePM/PrjMgnt/Project',
+        FFCSTRT::ROUTE_COMMENT    => 'Retourne une liste de fichier de la dernière version d\'un projet',
+        FFCSTRT::ROUTE_METHOD     => FFCSTRT::METHOD_GET,
+        FFCSTRT::ROUTE_MODEL      => 'FreePM::Model::ProjectLastVersion',
+        FFCSTRT::ROUTE_URL        => '/v1/prj_mgnt/project/:prj_id/lastversion',
+        FFCSTRT::ROUTE_CONTROLLER => 'FreePM::Controller::Project',
+        FFCSTRT::ROUTE_FUNCTION   => 'getLastVersion',
+        FFCSTRT::ROUTE_ROLE       => \FreeFW\Router\Route::ROLE_GET_ONE,
+        FFCSTRT::ROUTE_AUTH       => FFCSTRT::AUTH_IN,
+        FFCSTRT::ROUTE_MIDDLEWARE => [],
+        FFCSTRT::ROUTE_INCLUDE    => [],
+        FFCSTRT::ROUTE_SCOPE      => [],
+        FFCSTRT::ROUTE_PARAMETERS => [
+            'prj_id' => [
+                FFCSTRT::ROUTE_PARAMETER_ORIGIN   => FFCSTRT::ROUTE_PARAMETER_ORIGIN_PATH,
+                FFCSTRT::ROUTE_PARAMETER_TYPE     => FFCST::TYPE_BIGINT,
+                FFCSTRT::ROUTE_PARAMETER_REQUIRED => true,
+                FFCSTRT::ROUTE_PARAMETER_COMMENT  => 'Identifiant de l\'objet'
+            ],
+        ],
+        FFCSTRT::ROUTE_RESULTS    => [
+            '200' => [
+                FFCSTRT::ROUTE_RESULTS_TYPE    => FFCSTRT::RESULT_OBJECT,
+                FFCSTRT::ROUTE_RESULTS_MODEL   => 'FreePM::Model::ProjectLastVersion',
+                FFCSTRT::ROUTE_RESULTS_COMMENT => 'Réponse ok',
+            ],
+        ]
+    ],
 ];
