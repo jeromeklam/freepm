@@ -77,6 +77,7 @@ abstract class ProjectVersion extends \FreePM\Model\StorageModel\Base
     ];
     protected static $PRP_PRJV_BETA_TEST = [
         FFCST::PROPERTY_PRIVATE => 'prjv_beta_test',
+        FFCST::PROPERTY_PUBLIC => 'prjv_beta_test',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BOOLEAN,
         FFCST::PROPERTY_OPTIONS => [],
         FFCST::PROPERTY_COMMENT => 'Version en bêta test',
@@ -98,7 +99,7 @@ abstract class ProjectVersion extends \FreePM\Model\StorageModel\Base
             'prjv_version'      => self::$PRP_PRJV_VERSION,
             'prjv_from'         => self::$PRP_PRJV_FROM,
             'prjv_to'           => self::$PRP_PRJV_TO,
-            'prjv_beta_test'    => self::$PRP_PRJV_BETA_TEST
+            'prjv_beta_test'    => self::$PRP_PRJV_BETA_TEST,
         ];
     }
     /**
@@ -140,6 +141,24 @@ abstract class ProjectVersion extends \FreePM\Model\StorageModel\Base
                 FFCST::INDEX_FIELDS => 'prj_id,prjv_version',
                 FFCST::INDEX_EXISTS => FPCST::ERROR_VERSION_NUMBER_EXISTS
             ]
+        ];
+    }
+
+    /**
+     * Get One To many relationShips
+     *
+     * @return array
+     */
+    public function getRelationships()
+    {
+        return [
+            'files' => [
+                FFCST::REL_MODEL   => 'FreePM::Model::ProjectVersionFile',
+                FFCST::REL_FIELD   => 'prjv_id',
+                FFCST::REL_TYPE    => \FreeFW\Model\Query::JOIN_LEFT,
+                FFCST::REL_COMMENT => 'Les fichiers d\'une version',
+//              FFCST::REL_REMOVE  => FFCST::REL_REMOVE_CASCADE
+            ],
         ];
     }
 }
