@@ -167,4 +167,22 @@ abstract class Feature extends \FreePM\Model\StorageModel\Base
     {
         return '';
     }
+
+    /**
+     * Get One To many relationShips
+     *
+     * @return array
+     */
+    public function getRelationships()
+    {
+        return [
+            'desk_cols' => [
+                FFCST::REL_MODEL   => 'FreePM::Model::DeskColFeature',
+                FFCST::REL_FIELD   => 'deco_id',
+                FFCST::REL_TYPE    => \FreeFW\Model\Query::JOIN_LEFT,
+                FFCST::REL_COMMENT => 'Les liens vers les kanbans',
+                FFCST::REL_REMOVE  => FFCST::REL_REMOVE_CASCADE
+            ],
+        ];
+    }
 }
