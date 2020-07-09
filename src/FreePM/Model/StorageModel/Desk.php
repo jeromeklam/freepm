@@ -2,6 +2,7 @@
 namespace FreePM\Model\StorageModel;
 
 use \FreeFW\Constants as FFCST;
+use \FreePM\Constants as FPCST;
 
 /**
  * Desk
@@ -143,5 +144,19 @@ abstract class Desk extends \FreePM\Model\StorageModel\Base
     public static function getAutocompleteField()
     {
         return '';
+    }
+
+    /**
+     * Get uniq indexes
+     * @return array[]
+     */
+    public static function getUniqIndexes()
+    {
+        return [
+            'name' => [
+                FFCST::INDEX_FIELDS => 'grp_id,desk_name',
+                FFCST::INDEX_EXISTS => FPCST::ERROR_DESK_NAME_EXISTS
+            ]
+        ];
     }
 }
