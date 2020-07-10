@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `ix_desk_group_name` ON `pm_desk` (`grp_id`,`desk_name`);
