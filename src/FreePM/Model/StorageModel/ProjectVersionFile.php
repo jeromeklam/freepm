@@ -23,6 +23,7 @@ abstract class ProjectVersionFile extends \FreePM\Model\StorageModel\Base
         FFCST::PROPERTY_COMMENT => 'Identifiant du fichier',
         FFCST::PROPERTY_SAMPLE  => 123,
     ];
+
     protected static $PRP_PRJV_ID = [
         FFCST::PROPERTY_PRIVATE => 'prjv_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
@@ -37,6 +38,7 @@ abstract class ProjectVersionFile extends \FreePM\Model\StorageModel\Base
             ]
         ],
     ];
+
     protected static $PRP_PRJVF_NAME = [
         FFCST::PROPERTY_PRIVATE => 'prjvf_name',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_STRING,
@@ -45,17 +47,18 @@ abstract class ProjectVersionFile extends \FreePM\Model\StorageModel\Base
         FFCST::PROPERTY_MAX     => 64,
         FFCST::PROPERTY_SAMPLE  => 'Je suis un fichier.txt',
     ];
+
     protected static $PRP_PRJVF_LINK = [
         FFCST::PROPERTY_PRIVATE => 'prjvf_link',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_STRING,
         FFCST::PROPERTY_OPTIONS => [],
         FFCST::PROPERTY_COMMENT => 'Lien ou chemin vers l\'extérieur',
         FFCST::PROPERTY_MAX     => 200,
-        FFCST::PROPERTY_SAMPLE  => 'GED:1A23FE67AZEA',
+        FFCST::PROPERTY_SAMPLE  => '0a1fe8b54cdcd57964f',
     ];
+
     /**
-     * get properties
-     *
+     * Get properties
      * @return array[]
      */
     public static function getProperties()
@@ -67,43 +70,43 @@ abstract class ProjectVersionFile extends \FreePM\Model\StorageModel\Base
             'prjvf_link'        => self::$PRP_PRJVF_LINK,
         ];
     }
+
     /**
      * Set object source
-     *
      * @return string
      */
     public static function getSource()
     {
         return 'pm_project_version_file';
     }
+
     /**
      * Get object short description
-     *
      * @return string
      */
     public static function getSourceComments()
     {
         return 'Gestion des liens fichiers / versions';
     }
+
     /**
      * Get autocomplete field
-     *
      * @return string
      */
     public static function getAutocompleteField()
     {
         return '';
     }
+
     /**
      * Get uniq indexes
-     *
      * @return array[]
      */
     public static function getUniqIndexes()
     {
         return [
             'file' => [
-                FFCST::INDEX_FIELDS => 'prjv_id,prjvf_name,prjvf_link', // on peut avoir le même nom à différent endroit
+                FFCST::INDEX_FIELDS => 'prjv_id,prjvf_name',
                 FFCST::INDEX_EXISTS => FPCST::ERROR_FILE_EXISTS
             ]
         ];
