@@ -1,3 +1,7 @@
+# 1.7.0 : --/--/2020
+
+Réécriture du removeone,upload et download selon le projet FreeEDMS.
+
 # 1.6.0 : 13/07/2020
 
 * gestion simple de download et upload de fichier (càd que par l'intermédiaire de project_version_file)
