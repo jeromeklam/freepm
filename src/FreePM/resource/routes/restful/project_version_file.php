@@ -85,9 +85,8 @@ $routes_project_version_file = [
         ],
         FFCSTRT::ROUTE_RESULTS    => [
             '201' => [
-                FFCSTRT::ROUTE_RESULTS_TYPE    => FFCSTRT::RESULT_OBJECT,
-                FFCSTRT::ROUTE_RESULTS_MODEL   => 'FreePM::Model::ProjectVersionFile',
-                FFCSTRT::ROUTE_RESULTS_COMMENT => 'Objet créé',
+                FFCSTRT::ROUTE_RESULTS_TYPE    => FFCSTRT::RESULT_DATA,
+                FFCSTRT::ROUTE_RESULTS_COMMENT => 'Fichier downloadé',
             ],
         ]
     ],

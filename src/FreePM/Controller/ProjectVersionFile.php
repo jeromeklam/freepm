@@ -10,62 +10,18 @@ use \FreeFW\Constants as FFCST;
  */
 class ProjectVersionFile extends \FreeFW\Core\ApiController
 {
-    /**
-     * Récupére un fichier avec son contenu
-     * @param \Psr\Http\Message\ServerRequestInterface $p_request
-     */
-    public function downloadFile(\Psr\Http\Message\ServerRequestInterface $p_request, int $p_id) // NVT 291074
-    {
-        $this->logger->debug('FreePM.ProjectVersionFile.downloadFile.start');
-
-        if (!intval($p_id) > 0) {
-            $this->logger->debug('FreePM.ProjectVersionFile.downloadFile.end project_version_file id is mandatory');
-            return $this->createErrorResponse(FFCST::ERROR_ID_IS_MANDATORY);
-        }
-
-        /**
-         * @var \FreePM\Model\Base\ProjectVersionFile $prjvf
-         */
-        $prjvf = \FreeFW\DI\DI::get('FreePM::Model::ProjectVersionFile');
-        $prjvf = \FreePM\Model\ProjectVersionFile::findFirst(
-            [
-                'prjvf_id' => $p_id
-            ]
-        );
-
-        if (!$prjvf) {
-            $this->logger->debug('FreePM.ProjectVersionFile.downloadFile.end project_version_file not found');
-            return $this->createErrorResponse(FFCST::ERROR_NOT_FOUND);
-        }
-
-        if ($prjvf->getPrjvfLink() === '') {
-            $this->logger->debug('FreePM.ProjectVersionFile.downloadFile.end project_version_file no link');
-            return $this->createErrorResponse(FFCST::ERROR_NOT_FOUND);
-        }
-
-        $fileName = $prjvf->getPrjvfName();
-        $contentFile = null;
-
-        if ($this->gedGetFile($prjvf, $prjvf->getPrjvfLink(), $contentFile, $fileName) === true) {
-            $this->logger->debug('FreePM.ProjectVersionFileUpload.downloadFile.end');
-            return $this->createMimeTypeResponse($fileName,$contentFile);
-        }
-
-        if (!$prjvf->hasErrors()) {
-            $prjvf = null;
-        }
-
-        $this->logger->debug('FreePM.ProjectVersionFileUpload.downloadFile.end with error');
-        return $this->createErrorResponse(FFCST::ERROR_NOT_FOUND, $prjvf); // 404
-    }
 
     /**
-     * Ajoute un fichier avec son contenu
+     * @desc Copie un fichier encoder en base64 dans la ged,
+     * <br>puis mets à jour pm_project_version_file. si une erreur intervient il est supprimer de la ged.
+     *
      * @param \Psr\Http\Message\ServerRequestInterface $p_request
+     * @throws \FreeFW\Core\FreeFWStorageException
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function uploadFile(\Psr\Http\Message\ServerRequestInterface $p_request) // NVT 291074
+    public function uploadFile(\Psr\Http\Message\ServerRequestInterface $p_request)
     {
-        $this->logger->debug('FreePM.ProjectVersionFile.uploadFile.start');
+        $this->_debug(__METHOD__, 'start');
 
         /**
          * @var \FreeFW\Http\ApiParams $apiParams
@@ -74,8 +30,11 @@ class ProjectVersionFile extends \FreeFW\Core\ApiController
         if (!isset($p_request->default_model)) {
             throw new \FreeFW\Core\FreeFWStorageException(
                 sprintf('No default model for route !')
-                );
+            );
         }
+
+        $data = null;
+        $code = FFCST::ERROR_NO_DATA; // 409
 
         if ($apiParams->hasData()) {
             /**
@@ -83,44 +42,42 @@ class ProjectVersionFile extends \FreeFW\Core\ApiController
              */
             $data = $apiParams->getData();
 
-            // if _file != ''
-            // if _upload != ''
-            //
-            // sont déjà gérès par PROPERTY_OPTIONS.OPTION_REQUIRED de StorageModel\ProjectVersionFileUpload
+            $ged = new \FreeEDMS\Core\Edms();
 
-            // on demande à la GED de stocker le fichier _file
-            // puis en retour la GED nous renvoie un doc_externe ou false
+            $ged
+                ->setDocFilename($data->getPrjvfFile())
+                ->setContentFile($data->content_file)
+            ;
 
-            $doc_externe = $this->gedAddFile($data,$data->getPrjvfFile(),$data->getPrjvfUpload());
-
-            if ($doc_externe===false) {
-                if (!$data->hasErrors()) {
+            if ($ged->addFile() === false) {
+                if (!$ged->hasErrors()) {
                     $data = null;
+                } else {
+                    $data = $apiParams->getApiModel($p_request->default_model);
+                    $data->addErrors($ged->getErrors());
                 }
 
                 $code = FFCST::ERROR_NOT_INSERT; // 412
             } else {
-                $parts = pathinfo($data->getPrjvfFile()); // on découpe pour récupérer que le basename
-
-                // on stocke tout ca dans pm_project_version_file
-                // et on retourne un Model/ProjectVersionFile
-
                 /**
                  * @var \FreePM\Model\ProjectVersionFile $prjvf
                  */
                 $prjvf = \FreeFW\DI\DI::get('FreePM::Model::ProjectVersionFile');
+
                 $prjvf
                     ->setPrjvId($data->getPrjvId())
-                    ->setPrjvfName($parts['basename'])
-                    ->setPrjvfLink($doc_externe)
+                    ->setPrjvfName($ged->getDocFilename())
+                    ->setPrjvfLink($ged->getDocExternId())
                 ;
 
                 if ($prjvf->create()) {
                     $data = $this->getModelById($apiParams, $prjvf, $prjvf->getApiId());
 
-                    $this->logger->debug('FreePM.ProjectVersionFile.uploadFile.end');
+                    $this->_debug(__METHOD__, 'end');
                     return $this->createSuccessAddResponse($data); // 201
                 } else {
+                    $ged->removeFile();
+
                     if (!$prjvf->hasErrors()) {
                         $data = null; // erreur en provenance du create. donc de $prvjf
                     } else {
@@ -128,164 +85,92 @@ class ProjectVersionFile extends \FreeFW\Core\ApiController
                     }
 
                     $code = FFCST::ERROR_NOT_INSERT; // 412
-                }
-            }
-        } else { // pas de body !
-            $data = null;
-            $code = FFCST::ERROR_NO_DATA; // 409
+                } // if $prjvf->create
+            } // if $ged->addFile
         }
 
-        $this->logger->debug('FreePM.ProjectVersionFileUpload.uploadFile.end with error');
+        $this->_debug(__METHOD__, 'end with error');
         return $this->createErrorResponse($code, $data);
     }
 
     /**
-     * Copie un fichier encoder en base64 dans un répertoire défini par la config ged:dirname
-     * @param \FreeFW\Core\StorageModel &$p_model
-     * @param string $p_file nom complet du fichier qui doit être archivé
-     * @param string $p_upload contenu du fichier en base64 qui dot être archivé
-     * @return false|string avec erros[] du model renseigné
+     * @desc Renvoie un fichier de la ged.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $p_request
+     * @param int $p_id
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function gedAddFile(\FreeFW\Core\StorageModel &$p_model,string $p_file,string $p_upload) // NVT 299096
+    public function downloadFile(\Psr\Http\Message\ServerRequestInterface $p_request, int $p_id)
     {
-        if (!$p_model || $p_file == '' || $p_upload == '') { // minimum pour continuer !
-            $p_model->addError(
-                \FreeFW\Core\Error::TYPE_PRECONDITION, // FGCST::_MISSING_PARAMETERS
-                'missing parameters for ged !'
-            );
+        $this->_debug(__METHOD__, 'start');
 
-            return false;
+        /**
+         * @var \FreeFW\Http\ApiParams $apiParams
+         */
+        $apiParams = $p_request->getAttribute('api_params', false);
+        if (!isset($p_request->default_model)) {
+            throw new \FreeFW\Core\FreeFWStorageException(
+                sprintf('No default model for route !')
+            );
         }
 
-        $gedDirName = $this->getAppConfig()->get('ged:dirname', '');
-        $gedDirName = rtrim(str_replace('\\', '/', $gedDirName), '/');
+        $data = null;
+        $code = null;
 
-        if (!is_dir($gedDirName)) { // si ce n'est pas un répertoire on ne fait rien !
-            $p_model->addError(
-                \FreeFW\Core\Error::TYPE_PRECONDITION, // FGCST::_GED_NOT_FOUND
-                'ged not installed !'
+        if (!intval($p_id) > 0) {
+            $code = FFCST::ERROR_ID_IS_MANDATORY;
+        } else {
+            /**
+             * @var \FreePM\Model\Base\ProjectVersionFile $prjvf
+             */
+            $prjvf = \FreePM\Model\ProjectVersionFile::findFirst(
+                [
+                    'prjvf_id' => $p_id
+                ]
             );
 
-            return false;
-        }
+            if (!$prjvf) {
+                $code = FFCST::ERROR_NOT_FOUND;
+            } else {
+                $ged = new \FreeEDMS\Core\Edms();
 
-        $doc_externe = false;
+                if ($ged->getFile($prjvf->getPrjvfLink()) === false) {
+                    if (!$ged->hasErrors()) {
+                        $data = null;
+                    } else {
+                        $data = $apiParams->getApiModel($p_request->default_model);
+                        $data->addErrors($ged->getErrors());
+                    }
 
-        for ($i=0; $i<=8; $i++) { // on va essayer 8 fois de créer un fichier sur le disque
-            $doc_externe = md5(uniqid(microtime(true),true));
+                    $code = FFCST::ERROR_NOT_FOUND;
+                } else {
+                    $this->_debug(__METHOD__, 'end');
 
-            $gedFile = $gedDirName . '/' . $doc_externe;
-
-            if (!is_file($gedFile)) { // le fichier n'existe pas, super !
-                break;
+                    return $this->createMimeTypeResponse(
+                        $ged->getDocFilename(),
+                        $ged->getContentFile()
+                    );
+                }
             }
-
-            $gedFile = false;
-            usleep(100);
         }
 
-        if ($gedFile === false) {
-            $p_model->addError(
-                \FreeFW\Core\Error::TYPE_PRECONDITION, // FGCST::_IMPOSSIBLE_TO_ARCHIVE_A_FILE
-                'Unable to archive file in ged !'
-            );
-
-            return false;
-        }
-
-        try {
-            file_put_contents($gedFile,$p_upload);
-        } catch (\Exception $ex) {
-            $p_model->addError($ex->getCode(), $ex->getMessage());
-            return false;
-        }
-
-        // mise à jour de ged_document
-        // ...
-
-        return $doc_externe;
+        $this->_debug(__METHOD__, 'end with error');
+        return $this->createErrorResponse(FFCST::ERROR_NOT_FOUND, $data); // on retourne toujours un 404
     }
 
     /**
-     * Copie un fichier encoder en base64 dans un répertoire défini par la config ged:dirname
-     * @param \FreeFW\Core\StorageModel &$p_model
-     * @param string $p_doc_externe lien externe du fichier dont on doit récupérer le contenu
-     * @param string &$p_fileName nom du fichier qui correspond à p_doc_externe
-     * @param mixed &$p_content contenu du fichier à downloader
-     * @return boolean true si y a quelque chose à downloader.sinon erros[] du model renseigné contient les erreurs
+     * laisse une trace...
+     *
+     * @param string $p_who correspond à la méthode qui est en cours
+     * @param string $p_message correspond au message qu'on désire tracer !
+     * @param array $p_context
      */
-    public function gedGetFile(
-        \FreeFW\Core\StorageModel &$p_model,
-        string $p_doc_externe,
-        &$p_content,
-        string &$p_fileName
-    )
+    protected function _debug(string $p_who, string $p_message, array $p_context = array())
     {
-        if (!$p_model || $p_doc_externe == '') { // minimum pour continuer !
-            $p_model->addError(
-                \FreeFW\Core\Error::TYPE_PRECONDITION, // FGCST::_MISSING_PARAMETERS
-                'missing parameters for ged !'
-                );
-
-            return false;
-        }
-
-        // on contrôle que p_doc_externe existe bien dans la ged
-        // ...
-
-        if ($p_fileName === '' || $p_fileName == null) {
-            $p_model->addError(
-                \FreeFW\Core\Error::TYPE_PRECONDITION, // FGCST::_MISSING_PARAMETERS
-                'ged file name is mandatory !'
-                );
-
-            return false;
-        }
-
-        $gedDirName = $this->getAppConfig()->get('ged:dirname', '');
-        $gedDirName = rtrim(str_replace('\\', '/', $gedDirName), '/');
-
-        if (!is_dir($gedDirName)) { // si ce n'est pas un répertoire on ne fait rien !
-            $p_model->addError(
-                \FreeFW\Core\Error::TYPE_PRECONDITION, // FGCST::_GED_NOT_FOUND
-                'ged not installed !'
-                );
-
-            return false;
-        }
-
-        $gedFile = $gedDirName . '/' . $p_doc_externe;
-
-        if (!is_file($gedFile)) { // si le fichier n'existe pas on ne fait rien !
-            $p_model->addError(
-                \FreeFW\Core\Error::TYPE_PRECONDITION, // FGCST::_GED_NOT_FOUND
-                'ged file not found !'
-            );
-
-            $this->logger->debug(
-                sprintf(
-                    'FreePM.ProjectVersionFile.gedGetFile.end %s not exists',
-                    $gedFile
-                )
-            );
-        }
-
-        try {
-            $p_content = file_get_contents($gedFile);
-
-            if ($p_content === false) {
-                $p_model->addError(
-                    \FreeFW\Core\Error::TYPE_PRECONDITION, // FGCST::_GED_NOT_FOUND
-                    'ged error while get content file !'
-                );
-            } else {
-                return true;
-            }
-        } catch (\Exception $ex) {
-            $p_model->addError($ex->getCode(), $ex->getMessage());
-        }
-
-        $p_content = null;
-        return false;
+        $this->logger->debug(
+            str_replace(array('\\', '::'), array('.', '.'), $p_who)
+            . '.' . $p_message,
+            $p_context
+        );
     }
 }

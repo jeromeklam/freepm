@@ -29,9 +29,15 @@ abstract class ProjectVersionFileUpload extends \FreePM\Model\StorageModel\Proje
 
     /**
      * prjvf_upload
-     * @var string contient le contenu du fichier en base64
+     * @var string
      */
     protected $prjvf_upload = null;
+    /**
+     * content_file est affecté lorsque prjvf_upload est affecté
+     * @desc ce pointeur évite les copies en mémoire. cela peut vite devenir gourmant !
+     * @var string <b>pointeur</b> vers $prjvf_upload
+     */
+    public $content_file = null;
 
     /**
      * Set prjvf_pk
@@ -98,6 +104,7 @@ abstract class ProjectVersionFileUpload extends \FreePM\Model\StorageModel\Proje
     public function setPrjvfUpload($p_value)
     {
         $this->prjvf_upload = $p_value;
+        $this->content_file = &$this->prjvf_upload;
         return $this;
     }
     /**
