@@ -1,3 +1,13 @@
+# 1.7.0 : --/--/2020
+
+Réécriture du removeone,upload et download selon le projet FreeEDMS.
+
+# 1.6.0 : 13/07/2020
+
+* gestion simple de download et upload de fichier (càd que par l'intermédiaire de project_version_file)
+* ajout de 2 webservices : uploadfile (équivalent du createone) et downloadfile
+* suppression des webservices createone et updateone
+
 # 1.5.0 : 09/07/2020
 
 * rajour d'une unicité sur la table desk : le nom est unique par group

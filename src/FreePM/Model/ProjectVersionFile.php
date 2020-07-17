@@ -1,19 +1,49 @@
 <?php
 namespace FreePM\Model;
 
-use \FreeFW\Constants as FFCST;
-
 /**
- * Model Project
- *
- * @author ericmendez
+ * Model ProjectVersionFile
  */
 class ProjectVersionFile extends \FreePM\Model\Base\ProjectVersionFile
 {
 
     /**
-     * Behaviour
+     * Comportements
      */
     use \FreePM\Model\Behaviour\Project;
     use \FreePM\Model\Behaviour\ProjectVersion;
+
+    /**
+     *
+     * @return boolean
+     */
+    public function beforeRemove()
+    {
+        return true;
+    }
+
+    /**
+     *
+     * @return boolean
+     */
+    public function afterRemove()
+    {
+        if ($this->getPrjvfLink() !== '') {
+            $ged = new \FreeEDMS\Core\Edms();
+
+            $ged->setDocExternId($this->getPrjvfLink());
+
+            if ($ged->removeFile(false) === false) {
+                if ($ged->hasErrors()) {
+                    $this->addErrors($ged->getErrors());
+                }
+
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
