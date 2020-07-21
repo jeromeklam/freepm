@@ -47,6 +47,10 @@ class ProjectVersionFile extends \FreeFW\Core\ApiController
             $ged
                 ->setDocFilename($data->getPrjvfFile())
                 ->setContentFile($data->content_file)
+                ->setDocOrigTheme('PM')
+                ->setDocOrigType('VERSFILE')
+                ->setDocOrigAnyid(md5(uniqid(microtime(true),true)))
+                ->setDocDesc($data->getPrjvfDesc())
             ;
 
             if ($ged->addFile() === false) {
