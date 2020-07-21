@@ -1,6 +1,8 @@
 # 1.7.0 : --/--/2020
 
 Réécriture du removeone,upload et download selon le projet FreeEDMS.
+rajout de la PRJVF_DESC dans upload
+rajout de _debug
 
 # 1.6.0 : 13/07/2020
 
