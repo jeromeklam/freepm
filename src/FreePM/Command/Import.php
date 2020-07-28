@@ -9,13 +9,61 @@ namespace FreePM\Command;
 class Import
 {
 
+    public function beforeImport(
+        \FreeFW\Console\Input\AbstractInput $p_input,
+        \FreeFW\Console\Output\AbstractOutput $p_output
+        ) {
+            $p_output->write("Nettoyage", true);
+            $sso      = \FreeFW\DI\DI::getShared('sso');
+            $brokerId = $sso->getBrokerId();
+            $p_output->write("Broker : " . $brokerId, true);
+            $storage = \FreeFW\DI\DI::getShared('Storage::default');
+            $cnxBODest = $storage->getProvider();
+            if ($brokerId != '4') {
+                die('Wrong brokerId !');
+            }
+            //
+            $query = $cnxBODest->exec("DELETE FROM sso_broker_session WHERE 1=1");
+            $query = $cnxBODest->exec("DELETE FROM sso_session WHERE 1=1");
+            $query = $cnxBODest->exec("DELETE FROM sso_group_user WHERE grp_id > 5");
+            $query = $cnxBODest->exec("DELETE FROM sso_group_user WHERE user_id > 2");
+            $query = $cnxBODest->exec("DELETE FROM sso_user_broker WHERE brk_id > 4");
+            $query = $cnxBODest->exec("DELETE FROM sso_user_broker WHERE user_id > 2");
+            $query = $cnxBODest->exec("DELETE FROM sso_user_token WHERE user_id > 2");
+            $query = $cnxBODest->exec("DELETE FROM sso_password_token WHERE user_id > 2");
+            $query = $cnxBODest->exec("DELETE FROM pm_desk_col_feature");
+            $query = $cnxBODest->exec("DELETE FROM pm_desk_col");
+            $query = $cnxBODest->exec("DELETE FROM pm_desk");
+            $query = $cnxBODest->exec("DELETE FROM pm_feature");
+            $query = $cnxBODest->exec("DELETE FROM pm_status WHERE brk_id = " . $brokerId);
+            $query = $cnxBODest->exec("DELETE FROM pm_project_version_file WHERE prjv_id = (SELECT prjv_id FROM pm_project_version WHERE brk_id = " . $brokerId . ")");
+            $query = $cnxBODest->exec("DELETE FROM pm_project_version WHERE brk_id = " . $brokerId);
+            $query = $cnxBODest->exec("DELETE FROM pm_project WHERE grp_id > 5");
+            $query = $cnxBODest->exec("UPDATE sso_group SET grp_parent_id = null WHERE grp_id > 5");
+            $query = $cnxBODest->exec("UPDATE sso_group SET grp_realm_id = null WHERE grp_id > 5");
+            $query = $cnxBODest->exec("DELETE FROM sso_group WHERE grp_id > 5");
+            $query = $cnxBODest->exec("DELETE FROM sso_user WHERE user_id > 2");
+            $query = $cnxBODest->exec("DELETE FROM sso_autologin_cookie WHERE user_id > 2");
+            $query = $cnxBODest->exec("DELETE FROM sso_group_type WHERE grpt_id > 5");
+            $query = $cnxBODest->exec("DELETE FROM sso_job_function WHERE fct_id > 5");
+            $query = $cnxBODest->exec("DELETE FROM sys_alert");
+            $query = $cnxBODest->exec("DELETE FROM sys_history");
+            $query = $cnxBODest->exec("DELETE FROM sys_message");
+            $query = $cnxBODest->exec("DELETE FROM sys_notification");
+            $query = $cnxBODest->exec("DELETE FROM sys_rate");
+            //
+            die;
+            //
+            $p_output->write("Fin du nettoyage BO", true);
+    }
+
     /**
      * Import GIC
      *
      * @param \FreeFW\Console\Input\AbstractInput $p_input
      * @param \FreeFW\Console\Output\AbstractOutput $p_output
      */
-    public function import(
+    public function importGIC(
         \FreeFW\Console\Input\AbstractInput $p_input,
         \FreeFW\Console\Output\AbstractOutput $p_output
     ) {
@@ -29,37 +77,15 @@ class Import
         $sso      = \FreeFW\DI\DI::getShared('sso');
         $brokerId = $sso->getBrokerId();
         $p_output->write("Broker : " . $brokerId, true);
-        $provider = new \FreeFW\Storage\PDO\Mysql('mysql:host=mysql;dbname=GIC;charset=utf8;', 'super', 'YggDrasil');
+        $cnxGIC = new \FreeFW\Storage\PDO\Mysql('mysql:host=host.docker.internal;dbname=GIC;charset=utf8;', 'root', 'm0n1c4po');
         $storage = \FreeFW\DI\DI::getShared('Storage::default');
-        $assoPdo = $storage->getProvider();
+        $cnxBODest = $storage->getProvider();
         if ($brokerId != '4') {
             die('Wrong brokerId !');
         }
         //
-        $p_output->write("Nettoyage", true);
-        $query = $assoPdo->exec("DELETE FROM sso_broker_session WHERE 1=1");
-        $query = $assoPdo->exec("DELETE FROM sso_session WHERE 1=1");
-        $query = $assoPdo->exec("DELETE FROM sso_group_user WHERE grp_id > 5 ");
-        $query = $assoPdo->exec("DELETE FROM sso_group_user WHERE user_id > 2");
-        $query = $assoPdo->exec("DELETE FROM sso_user_broker WHERE brk_id > 4");
-        $query = $assoPdo->exec("DELETE FROM sso_user_broker WHERE user_id > 2");
-        $query = $assoPdo->exec("DELETE FROM sso_user_token WHERE user_id > 2");
-        $query = $assoPdo->exec("DELETE FROM sso_password_token WHERE user_id > 2");
-        $query = $assoPdo->exec("DELETE FROM pm_desk_col_feature WHERE brk_id = " . $brokerId);
-        $query = $assoPdo->exec("DELETE FROM pm_desk_col WHERE brk_id = " . $brokerId);
-        $query = $assoPdo->exec("DELETE FROM pm_desk WHERE brk_id = " . $brokerId);
-        $query = $assoPdo->exec("DELETE FROM pm_feature WHERE brk_id = " . $brokerId);
-        $query = $assoPdo->exec("DELETE FROM pm_status WHERE brk_id = " . $brokerId);
-        $query = $assoPdo->exec("DELETE FROM pm_project_version WHERE brk_id = " . $brokerId);
-        $query = $assoPdo->exec("DELETE FROM pm_project WHERE grp_id > 5");
-        $query = $assoPdo->exec("UPDATE sso_group SET grp_parent_id = null grp_id > 5");
-        $query = $assoPdo->exec("DELETE FROM sso_group WHERE grp_id > 5");
-        $query = $assoPdo->exec("DELETE FROM sso_user WHERE user_id > 2");
-        $query = $assoPdo->exec("DELETE FROM sso_group_type WHERE grpt_id > 5");
-        $query = $assoPdo->exec("DELETE FROM sso_job_function WHERE fct_id > 5");
-        //
         $groupTypes = [];
-        $queryTypes = $provider->prepare("SELECT * FROM T_TYPE_CLIENT WHERE TYPE_CLIENT_ID IN (" . implode(",", $typeclientFilter) . ")");
+        $queryTypes = $cnxGIC->prepare("SELECT * FROM T_TYPE_CLIENT WHERE TYPE_CLIENT_ID IN (" . implode(",", $typeclientFilter) . ")");
         $queryTypes->execute();
         while ($rowGrpType = $queryTypes->fetch(\PDO::FETCH_OBJ)) {
             /**
@@ -84,7 +110,7 @@ class Import
         $users  = [];
         $logins = [];
         //
-        $queryClients = $provider->prepare("SELECT * FROM T_CLIENT WHERE TYPE_CLIENT_ID IN (" . implode(",", $typeclientFilter) . ")");
+        $queryClients = $cnxGIC->prepare("SELECT * FROM T_CLIENT WHERE TYPE_CLIENT_ID IN (" . implode(",", $typeclientFilter) . ")");
         $queryClients->execute();
         while ($rowClient = $queryClients->fetch(\PDO::FETCH_OBJ)) {
             echo ".";
@@ -122,7 +148,7 @@ class Import
                 die('ERROR');
             }
             $groups[$rowClient->CLIENT_ID] = $group->getGrpId();
-            $queryInterlocuteurs = $provider->prepare("SELECT * FROM T_INTERLOCUTEUR WHERE CLIENT_ID  = " . $rowClient->CLIENT_ID);
+            $queryInterlocuteurs = $cnxGIC->prepare("SELECT * FROM T_INTERLOCUTEUR WHERE CLIENT_ID  = " . $rowClient->CLIENT_ID);
             $queryInterlocuteurs->execute();
             while ($rowInterlocuteur = $queryInterlocuteurs->fetch(\PDO::FETCH_OBJ)) {
                 $civ   = \FreeSSO\Model\User::TITLE_OTHER;
@@ -196,6 +222,30 @@ class Import
             }
         }
         //
-        $p_output->write("Fin de l'import", true);
+        $p_output->write("Fin de l'import GIC", true);
+    }
+
+    public function importBO(
+        \FreeFW\Console\Input\AbstractInput $p_input,
+        \FreeFW\Console\Output\AbstractOutput $p_output
+    ) {
+        $defaultFunction  = 4;
+        $typeclientFilter = [2, 4, 13];
+        $mainGroup[2]     = 5;
+        $mainGroup[4]     = 5;
+        $mainGroup[13]    = 5;
+
+        $p_output->write("Import BO", true);
+        $sso      = \FreeFW\DI\DI::getShared('sso');
+        $brokerId = $sso->getBrokerId();
+        $p_output->write("Broker : " . $brokerId, true);
+        $cnxBO = new \FreeFW\Storage\PDO\Mysql('mysql:host=host.docker.internal;dbname=omegaweb;charset=utf8;', 'root', 'm0n1c4po');
+        $storage = \FreeFW\DI\DI::getShared('Storage::default');
+        $cnxBODest = $storage->getProvider();
+        if ($brokerId != '4') {
+            die('Wrong brokerId !');
+        }
+        //
+        $p_output->write("Fin de l'import BO", true);
     }
 }
