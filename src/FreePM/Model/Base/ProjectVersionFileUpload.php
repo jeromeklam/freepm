@@ -40,6 +40,12 @@ abstract class ProjectVersionFileUpload extends \FreePM\Model\StorageModel\Proje
     public $content_file = null;
 
     /**
+     * prjvf_desc
+     * @var string
+     */
+    protected $prjvf_desc = null;
+
+    /**
      * Set prjvf_pk
      * @param int $p_value
      * @return \FreePM\Model\ProjectVersionFileUpload
@@ -114,5 +120,24 @@ abstract class ProjectVersionFileUpload extends \FreePM\Model\StorageModel\Proje
     public function getPrjvfUpload()
     {
         return $this->prjvf_upload;
+    }
+
+    /**
+     * Set prjvf_desc
+     * @param string $p_value
+     * @return \FreePM\Model\ProjectVersionFileUpload
+     */
+    public function setPrjvfDesc($p_value)
+    {
+        $this->prjvf_desc = $p_value;
+        return $this;
+    }
+    /**
+     * Get prjvf_desc
+     * @return string
+     */
+    public function getPrjvfDesc()
+    {
+        return $this->prjvf_desc;
     }
 }

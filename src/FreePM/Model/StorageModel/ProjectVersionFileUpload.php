@@ -50,6 +50,14 @@ abstract class ProjectVersionFileUpload extends \FreePM\Model\StorageModel\Base
         FFCST::PROPERTY_SAMPLE  => 'bGlnbmUgMSA6IGplIHN1aXMgbGUgY29udGVudSBkdSBmaWNoaWVyDQo=',
     ];
 
+    protected static $PRP_PRJVF_DESC = [
+        FFCST::PROPERTY_PRIVATE => 'prjvf_desc',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_TEXT,
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_LOCAL],
+        FFCST::PROPERTY_COMMENT => 'Description du fichier',
+//      FFCST::PROPERTY_MAX     => 2000,
+        FFCST::PROPERTY_SAMPLE  => 'je suis utile à...',
+    ];
     /**
      * Get properties
      * @return array[]
@@ -61,6 +69,7 @@ abstract class ProjectVersionFileUpload extends \FreePM\Model\StorageModel\Base
             'prjv_id'       => self::$PRP_PRJV_ID,
             'prjvf_file'    => self::$PRP_PRJVF_FILE,
             'prjvf_upload'  => self::$PRP_PRJVF_UPLOAD,
+            'prjvf_desc'    => self::$PRP_PRJVF_DESC,
         ];
     }
 
