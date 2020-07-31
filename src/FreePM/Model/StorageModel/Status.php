@@ -46,11 +46,13 @@ abstract class Status extends \FreePM\Model\StorageModel\Base
     ];
     protected static $PRP_STA_TYPE = [
         FFCST::PROPERTY_PRIVATE => 'sta_type',
-        FFCST::PROPERTY_TYPE    => FFCST::TYPE_STRING,
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_SELECT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED],
-        FFCST::PROPERTY_COMMENT => '',
+        FFCST::PROPERTY_ENUM    => ['CLOSED','PENDING','OK','REFUSED'],
+        //FFCST::PROPERTY_DEFAULT => 'PENDING',
+        FFCST::PROPERTY_COMMENT => 'Statut général',
         FFCST::PROPERTY_MAX     => 7,
-        FFCST::PROPERTY_SAMPLE  => '',
+        FFCST::PROPERTY_SAMPLE  => 'OK',
     ];
 
     /**
