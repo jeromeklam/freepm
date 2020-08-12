@@ -12,12 +12,12 @@ $localCommands = [
     ],
     'freepm.gic.importGIC' => [
         'command'    => 'gic::importGIC',
-        'controller' => 'FreePM::Command::ImportGIC',
+        'controller' => 'FreePM::Command::Import',
         'function'   => 'importGIC'
     ],
     'freepm.bo.importBO' => [
         'command'    => 'bo::importBO',
-        'controller' => 'FreePM::Command::ImportBO',
+        'controller' => 'FreePM::Command::Import',
         'function'   => 'importBO'
     ],
 ];
