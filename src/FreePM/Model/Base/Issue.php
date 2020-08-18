@@ -34,16 +34,16 @@ abstract class Issue extends \FreePM\Model\StorageModel\Issue
     protected $current_user_id = null;
 
     /**
-     * jvs_user_id
+     * user_jvs_id
      * @var int
      */
-    protected $jvs_user_id = null;
+    protected $user_jvs_id = null;
 
     /**
-     * jvs_current_user_id
+     * current_user_jvs_id
      * @var int
      */
-    protected $jvs_current_user_id = null;
+    protected $current_user_jvs_id = null;
 
     /**
      * close_user_id
@@ -52,10 +52,10 @@ abstract class Issue extends \FreePM\Model\StorageModel\Issue
     protected $close_user_id = null;
 
     /**
-     * close_jvs_user_id
+     * close_user_jvs_id
      * @var int
      */
-    protected $close_jvs_user_id = null;
+    protected $close_user_jvs_id = null;
 
     /**
      * prj_id
@@ -222,49 +222,49 @@ abstract class Issue extends \FreePM\Model\StorageModel\Issue
     }
 
     /**
-     * Set jvs_user_id
+     * Set user_jvs_id
      *
      * @param int $p_value
      *
      * @return \FreePM\Model\Issue
      */
-    public function setJvsUserId($p_value)
+    public function setUserJvsId($p_value)
     {
-        $this->jvs_user_id = $p_value;
+        $this->user_jvs_id = $p_value;
         return $this;
     }
 
     /**
-     * Get jvs_user_id
+     * Get user_jvs_id
      *
      * @return int
      */
-    public function getJvsUserId()
+    public function getUserJvsId()
     {
-        return $this->jvs_user_id;
+        return $this->user_jvs_id;
     }
 
     /**
-     * Set jvs_current_user_id
+     * Set current_user_jvs_id
      *
      * @param int $p_value
      *
      * @return \FreePM\Model\Issue
      */
-    public function setJvsCurrentUserId($p_value)
+    public function setCurrentUserJvsId($p_value)
     {
-        $this->jvs_current_user_id = $p_value;
+        $this->current_user_jvs_id = $p_value;
         return $this;
     }
 
     /**
-     * Get jvs_current_user_id
+     * Get current_user_jvs_id
      *
      * @return int
      */
-    public function getJvsCurrentUserId()
+    public function getCurrentUserJvsId()
     {
-        return $this->jvs_current_user_id;
+        return $this->current_user_jvs_id;
     }
 
     /**
@@ -291,26 +291,26 @@ abstract class Issue extends \FreePM\Model\StorageModel\Issue
     }
 
     /**
-     * Set close_jvs_user_id
+     * Set close_user_jvs_id
      *
      * @param int $p_value
      *
      * @return \FreePM\Model\Issue
      */
-    public function setCloseJvsUserId($p_value)
+    public function setCloseUserJvsId($p_value)
     {
-        $this->close_jvs_user_id = $p_value;
+        $this->close_user_jvs_id = $p_value;
         return $this;
     }
 
     /**
-     * Get close_jvs_user_id
+     * Get close_user_jvs_id
      *
      * @return int
      */
-    public function getCloseJvsUserId()
+    public function getCloseUserJvsId()
     {
-        return $this->close_jvs_user_id;
+        return $this->close_user_jvs_id;
     }
 
     /**

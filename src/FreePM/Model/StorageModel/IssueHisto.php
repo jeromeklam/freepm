@@ -50,30 +50,30 @@ abstract class IssueHisto extends \FreeFW\Core\StorageModel
             ]
         ],
     ];
-    protected static $PRP_JVS_USER_ID = [
-        FFCST::PROPERTY_PRIVATE => 'jvs_user_id',
+    protected static $PRP_USER_JVS_ID = [
+        FFCST::PROPERTY_PRIVATE => 'user_jvs_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => 'Identifiant de l\'interlocuteur JVS',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['jvs_user_id' =>
+        FFCST::PROPERTY_FK      => ['user_jvs_id' =>
             [
                 FFCST::FOREIGN_MODEL => 'NS::Model::ModelName',
-                FFCST::FOREIGN_FIELD => 'jvs_user_id',
+                FFCST::FOREIGN_FIELD => 'user_jvs_id',
                 FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
             ]
         ],
     ];
-    protected static $PRP_JVS_NEXT_USER_ID = [
-        FFCST::PROPERTY_PRIVATE => 'jvs_next_user_id',
+    protected static $PRP_NEXT_USER_JVS_ID = [
+        FFCST::PROPERTY_PRIVATE => 'next_user_jvs_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => 'Identifiant de l\'interlocuteur JVS à qui est transféré l\'incident',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['jvs_next_user_id' =>
+        FFCST::PROPERTY_FK      => ['next_user_jvs_id' =>
             [
                 FFCST::FOREIGN_MODEL => 'NS::Model::ModelName',
-                FFCST::FOREIGN_FIELD => 'jvs_next_user_id',
+                FFCST::FOREIGN_FIELD => 'next_user_jvs_id',
                 FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
             ]
         ],
@@ -158,8 +158,8 @@ abstract class IssueHisto extends \FreeFW\Core\StorageModel
             'issh_id'          => self::$PRP_ISSH_ID,
             'iss_id'           => self::$PRP_ISS_ID,
             'user_id'          => self::$PRP_USER_ID,
-            'jvs_user_id'      => self::$PRP_JVS_USER_ID,
-            'jvs_next_user_id' => self::$PRP_JVS_NEXT_USER_ID,
+            'user_jvs_id'      => self::$PRP_USER_JVS_ID,
+            'next_user_jvs_id' => self::$PRP_NEXT_USER_JVS_ID,
             'issh_from'        => self::$PRP_ISSH_FROM,
             'issh_to'          => self::$PRP_ISSH_TO,
             'issh_comm'        => self::$PRP_ISSH_COMM,

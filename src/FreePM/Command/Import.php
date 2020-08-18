@@ -9,7 +9,136 @@ namespace FreePM\Command;
 class Import
 {
 
-    public function beforeImport(
+    /**
+     * Tableau des projets
+     * @var array
+     */
+    protected static $mt_projects = null;
+    protected static $mt_versions = null;
+    protected static $mt_groups = null;
+    protected static $mt_users = null;
+
+    /**
+     * Recherche des projets existants
+     *
+     * @param \PDO $p_cnxWebBO
+     *
+     * àreturn void
+     */
+    protected function loadInMemory($p_cnxWebBO)
+    {
+        /**
+         * Recherche des projets existants
+         */
+        if (self::$mt_projects === null) {
+            self::$mt_projects = [];
+            $queryProjects = $cnxWebBO->prepare("SELECT * FROM pm_project");
+            $queryProjects->execute();
+            while ($rowProject = $queryProjects->fetch(\PDO::FETCH_OBJ)) {
+                self::$mt_projects[$rowProject->prj_code] = $rowProject->prj_id;
+                /**
+                 * Recherche des versions de projets existants
+                 */
+                if (self::$mt_versions === null) {
+                    self::$mt_versions = [];
+                    $queryVersions = $cnxWebBO->prepare("SELECT * FROM pm_project_version WHERE prj_id = " + $rowProject->prj_id);
+                    $queryVersions->execute();
+                    while ($rowVersion = $queryVersions->fetch(\PDO::FETCH_OBJ)) {
+                        self::$mt_versions[$rowProject->prj_code.'@'.$rowVersion->prjv_version] = $rowVersion->prjv_id;
+                    }
+                }
+            }
+        }
+
+        /**
+         * Recherche des clients existants
+         */
+        if (self::$mt_groups === null) {
+            self::$mt_groups = [];
+            $queryGroups = $cnxWebBO->prepare("SELECT * FROM sso_group");
+            $queryGroups->execute();
+            while ($rowGroup = $queryGroups->fetch(\PDO::FETCH_OBJ)) {
+                self::$mt_groups[$rowGroup->grp_extern_code] = $rowGroup->grp_id;
+            }
+        }
+
+        /**
+         * Recherche des utilisateurs existants
+         */
+        if (self::$mt_users === null) {
+            self::$mt_users = [];
+            $queryUsers = $cnxWebBO->prepare("SELECT * FROM pm_user");
+            $users = [];
+            $queryUsers->execute();
+            while ($rowUser = $queryUsers->fetch(\PDO::FETCH_OBJ)) {
+                self::$mt_users[$rowUser->user_extern_code] = $rowUser->user_id;
+            }
+        }
+    }
+
+    /**
+     * Get new project id
+     *
+     * @param mixed $p_gic_code   Code Application GIC
+     *
+     * @return number | null
+     */
+    protected function getNewProjectId($p_gic_code)
+    {
+        if (array_key_exists($p_gic_code, self::$mt_projects)) {
+            return intval(self::$mt_projects[$p_gic_code]);
+        }
+        return null;
+    }
+
+    /**
+     * Get new version id
+     *
+     * @param mixed $p_gic_code   Code Application GIC
+     *
+     * @return number | null
+     */
+    protected function getNewVersionId($p_gic_prj, $p_gic_vers)
+    {
+        $prjVers = $p_gic_prj.'@'.$p_gic_vers;
+        if (array_key_exists($prjVers, self::$mt_versions)) {
+            return intval(self::$mt_versions[$prjVers]);
+        }
+        return null;
+    }
+
+    /**
+     * Get new group id
+     *
+     * @param mixed $p_gic_id   Identifiant GIC
+     *
+     * @return number | null
+     */
+    protected function getNewGroupId($p_gic_id)
+    {
+        if (array_key_exists($p_gic_id, self::$mt_groups)) {
+            return intval(self::$mt_groups[$p_gic_id]);
+        }
+        return null;
+    }
+
+    /**
+     * Get new user id
+     *
+     * @param mixed $p_gic_id   Identifiant GIC
+     *
+     * @return number | null
+     */
+    protected function getNewUserId($p_gic_id)
+    {
+        if (array_key_exists($p_gic_id, self::$mt_users)) {
+            return intval(self::$mt_users[$p_gic_id]);
+        }
+        return null;
+    }
+
+
+    public function removeBeforeImport(
         \FreeFW\Console\Input\AbstractInput $p_input,
         \FreeFW\Console\Output\AbstractOutput $p_output
         ) {
@@ -59,6 +188,39 @@ class Import
     }
 
     /**
+     * Suppression des données pour les demandes
+     *
+     * @param \PDO $p_cnxWebBO
+     *
+     * @return void
+     */
+    protected function removePmFeatures($p_cnxWebBO)
+    {
+        /**
+         *
+         */
+        $query = $p_cnxWebBO->exec("DELETE FROM pm_feature");
+        $query = $p_cnxWebBO->exec("DELETE FROM pm_feature_histo");
+    }
+
+    /**
+     * Suppression des données pour les incidents
+     *
+     * @param \PDO $p_cnxWebBO
+     *
+     * @return void
+     */
+    protected function removePmIssues($p_cnxWebBO)
+    {
+        /**
+         *
+         */
+        $query = $p_cnxWebBO->exec("DELETE FROM pm_issue_histo");
+        $query = $p_cnxWebBO->exec("DELETE FROM pm_issue");
+        $query = $p_cnxWebBO->exec("DELETE FROM pm_issue_category");
+    }
+
+    /**
      * Import GIC
      *
      * @param \FreeFW\Console\Input\AbstractInput $p_input
@@ -84,13 +246,51 @@ class Import
         if ($brokerId != '4') {
             die('Wrong brokerId !');
         }
-        //
+
+        /**
+         * Import des Versions de projets
+         */
+
+        /** Correspondance des types de versions **/
+        $typeVers['R'] = 'REAL';
+        $typeVers['T'] = 'TEST';
+        $typeVers['A'] = 'ALPHA';
+        $typeVers['D'] = 'DEV';
+
+        $queryVersions = $cnxGIC->prepare("SELECT * FROM T_DEV_VERSION V
+                                            WHERE UPPER(APP_CODE) IN ('OMEGA','ICLIENT','GIC')"
+                                           );
+        $queryVersions->execute();
+        while ($rowVersion = $queryVersions->fetch(\PDO::FETCH_OBJ)) {
+            /**
+             * @var \FreeSSO\Model\ProjectVersion
+             */
+            $prjVersion = new \FreePM\Model\ProjectVersion();
+            $prjVersion
+            ->setBrkId($brokerId)
+            ->setPrjId($this->getNewProjectId($rowVersion->APP_CODE))
+            ->setPrjvVersion($rowVersion->VERSION)
+            ->setPrjvFrom($rowVersion->DEBUT)
+            ->setPrjvTo($rowVersion->Fin)
+            ->setPrjvType($typeVers[$rowVersion->TYPE_VERSION])
+            ;
+
+            if (!$prjVersion->create()) {
+                var_export($prjVersion->getErrors());
+                die('ERROR');
+            }
+            self::$mt_versions[$rowVersion->APP_CODE.'@'.$rowVersion->VERSION] = $prjVersion->getPrjvId();
+        }
+
+        /**
+         * Import des Types de Clients
+         */
         $groupTypes = [];
         $queryTypes = $cnxGIC->prepare("SELECT * FROM T_TYPE_CLIENT WHERE TYPE_CLIENT_ID IN (" . implode(",", $typeclientFilter) . ")");
         $queryTypes->execute();
         while ($rowGrpType = $queryTypes->fetch(\PDO::FETCH_OBJ)) {
             /**
-             * @var \FreeSSO\Model\GroupType $groupType
+             * @var \FreeSSO\Model\GroupType
              */
             $groupType = \FreeFW\DI\DI::get('FreeSSO::Model::GroupType');
             $groupType
@@ -105,12 +305,14 @@ class Import
             }
             $groupTypes[$rowGrpType->TYPE_CLIENT_ID] = $groupType->getGrptId();
         }
-        //
+
+
         $codes  = [];
-        $groups = [];
-        $users  = [];
         $logins = [];
-        //
+
+        /**
+         * Import des Clients
+         */
         $queryClients = $cnxGIC->prepare("SELECT * FROM T_CLIENT WHERE TYPE_CLIENT_ID IN (" . implode(",", $typeclientFilter) . ")");
         $queryClients->execute();
         while ($rowClient = $queryClients->fetch(\PDO::FETCH_OBJ)) {
@@ -142,14 +344,18 @@ class Import
                 ->setGrpFrom($rowClient->DEBUT)
                 ->setGrpTo($rowClient->FIN)
                 ->setGrpParentId($mainGroup[$rowClient->TYPE_CLIENT_ID])
+                ->setGrpExternCode($rowClient->CLIENT_ID)
             ;
             if (!$group->create()) {
                 var_export($rowClient);
                 var_export($group->getErrors());
                 die('ERROR');
             }
-            $groups[$rowClient->CLIENT_ID] = $group->getGrpId();
+            self::$mt_groups[$rowClient->CLIENT_ID] = $group->getGrpId();
 
+            /**
+             * Import des Interlocuteurs
+             */
             $queryInterlocuteurs = $cnxGIC->prepare("SELECT * FROM T_INTERLOCUTEUR WHERE CLIENT_ID  = " . $rowClient->CLIENT_ID);
             $queryInterlocuteurs->execute();
             while ($rowInterlocuteur = $queryInterlocuteurs->fetch(\PDO::FETCH_OBJ)) {
@@ -204,7 +410,9 @@ class Import
                     var_export($user->getErrors());
                     die('ERROR');
                 }
+
                 /**
+                 *
                  * @var \FreeSSO\Model\GroupUser $groupUser
                  */
                 $groupUser = \FreeFW\DI\DI::get('FreeSSO::Model::GroupUser');
@@ -364,6 +572,53 @@ class Import
     }
 
     /**
+     * Get Priority Feature
+     *
+     * @param mixed $p_gic_id   Identifiant GIC
+     *
+     * @return int
+     *
+     * Dans GIC 3 types de priorités alors que dans Omegaweb BO Priorité de 1 à 9
+     */
+    protected function getPriorityFeature($p_gic_id)
+    {
+        $prioritys[1] = 1; // Bénin
+        $prioritys[2] = 5; // Gênant
+        $prioritys[3] = 9; // Bloquant
+
+        if (array_key_exists($p_gic_id, $prioritys)) {
+            return $prioritys[$p_gic_id];
+        }
+        return 1;
+    }
+
+    /**
+     * Get Notes
+     *
+     * @param mixed $p_gic_id   Identifiant GIC
+     *
+     * @return String
+     */
+    protected function getNewNote($p_gic_id)
+    {
+        $notes[1] = 'INCOHERENT';
+        $notes[2] = 'RECURRENT_LOW';
+        $notes[3] = 'RECURRENT_HIGH';
+        $notes[4] = 'LEGAL';
+        $notes[5] = 'INCORRECT_BEHAVIOUR';
+        $notes[6] = 'RISKY';
+        $notes[7] = 'IMPOSSIBLE';
+        $notes[8] = 'COMPLEX';
+        $notes[9] = 'STANDARD';
+        $notes[10] = 'NOT_REPRODUCED_ERROR';
+
+        if (array_key_exists($p_gic_id, $notes)) {
+            return $notes[$p_gic_id];
+        }
+        return 'NONE';
+    }
+
+    /**
      * Imports Demandes GIC + NovaTime
      */
     public function importGIC_Feature(
@@ -381,44 +636,139 @@ class Import
             if ($brokerId != '4') {
                 die('Wrong brokerId !');
             }
+            /**
+             * Suppression des données
+             */
+            $this->removePmFeatures($cnxWebBO);
 
-            $query = $cnxWebBO->exec("DELETE FROM pm_feature");
-            $query = $cnxWebBO->exec("DELETE FROM pm_feature_histo");
+            /**
+             * Chargement des données en mémoire
+             */
+            $this->loadInMemory($cnxWebBO);
 
-            $demandes = [];
-            $demandes = $cnxGIC->prepare("SELECT D.*, A.CODE APP_CODE FROM T_DEMANDE D
-                                         JOIN T_DEV_APPLICATION A ON A.DEV_APPLICATION_ID = D.DEV_APPLICATION_ID
-                                         AND UPPER(A.CODE) IN ('OMEGA','ICLIENT','GIC')
+            /** Correspondance de l'état des demandes **/
+            $status['A'] = 1; // Accepté
+            $status['C'] = 2; // CT/ CP A Analyser
+            $status['N'] = 3; // En cours
+            $status['F'] = 4; // Refusé
+            $status['J'] = 5; // Rejeté
+
+            $queryDemandes = $cnxGIC->prepare("SELECT D.*, A.CODE APP_CODE, VF.VERSION APP_VERS_F, VT.VERSION APP_VERS_T FROM T_DEMANDE D
+                                         JOIN T_DEV_APPLICATION A ON A.DEV_APPLICATION_ID = D.DEV_APPLICATION_ID AND UPPER(A.CODE) IN ('OMEGA','ICLIENT','GIC')
+                                         JOIN T_DEV_VERSION VF ON VF.DEV_VERSION_ID = D.DEV_VERSION_ID
+                                         LEFT JOIN T_DEV_VERSION VT ON VT.DEV_VERSION_ID = D.SORTIE_DEV_VERSION_ID
                                          WHERE D.CREE_LE >= '2015-01-01' AND NOVATIME_ID IS NULL");
-            $queryProject = $cnxWebBO->prepare("SELECT prj_id FROM pm_project WHERE prj_code = :codePrj");
+            $queryDecisions = $cnxGIC->prepare("SELECT * FROM T_DECISION WHERE DEMANDE_ID = :demandeId");
             $queryDemandes->execute();
-            while ($rowDemande = $demandes->fetch(\PDO::FETCH_OBJ)) {
+            while ($rowDemande = $queryDemandes->fetch(\PDO::FETCH_OBJ)) {
                 /**
                  * @var \FreeSSO\Model\Features $feature
                  */
 
-                /** On recherche l'Id de l'application (du project) **/
-                $codeProject = $rowDemande->APP_CODE;
-                $queryProject->bindParam(":codePrj",$codeProject);
-                $queryProject->execute();
-                $prjId = $queryProject->fetchColumn();
-                /** On recherche l'Id de l'application (du project) **/
+                /** En fonction de l'état on renseigne la date de fin **/
+                $featTo = $rowDemande->DATE_REALISATION;
+                $comm = $rowDemande->TEXTE_REALISATION;
+                switch ($rowDemande->ETAT) {
+                    case 'J':
+                        $featTo = $rowDemande->DATE_REJET;
+                        $comm = $rowDemande->MOTIF;
+                        break;
+                    case 'F':
+                        $featTo = $rowDemande->DATE_REFUS;
+                        $comm = $rowDemande->MOTIF;
+                        break;
+                };
+                /** Concaténation de tous les commentaires **/
+                if ($rowDemande->TEXTE_FONCTIONNELLE <> '') {
+                    if ($comm <> '') {
+                        $comm .= '\n' . '\n';
+                    }
+                    $comm .= $rowDemande->TEXTE_FONCTIONNELLE;
+                }
+                if ($rowDemande->TEXTE_TECHNIQUE <> '') {
+                    if ($comm <> '') {
+                        $comm .= '\n' . '\n';
+                    }
+                    $comm .= '\n' . '\n' . $rowDemande->TEXTE_TECHNIQUE;
+                }
 
                 //$feature = \FreeFW\DI\DI::get('FreePM::Model::Feature');
                 $feat = new \FreePM\Model\Feature();
                 $feat
+                    ->setFeatId($rowDemande->$rowDemande->DEMANDE_ID)
                     ->setBrkId($broker_id)
                     ->setGrpId(5)
-                    ->setPrjId($rowDemande->DEV_APPLICATION_ID)
+                    ->setPrjId($this->getNewProjectId($rowDemande->APP_CODE))
+                    ->setFromPrjvId($this->getNewVersionId($rowDemande->APP_CODE, $rowDemande->APP_VERS_F))
+                    ->setToPrjvId($this->getNewVersionId($rowDemande->APP_CODE, $rowDemande->APP_VERS_T))
+                    ->setUserId($this->getNewUserId($rowDemande->RESPONSABLE_ID))
+                    ->setUserJvsId($this->getNewUserId($rowDemande->DEVELOPPEMENT_ID))
+                    ->setFeatFrom($rowDemande->CREE_LE)
+                    ->setFeatDeadline($rowDemande->DATE_ECHEANCE)
+                    ->setFeatPriority($this->getPriorityFeature($rowDemande->PRIORITE_ID))
+                    ->setFeatNoteDev($this->getNewNote($rowDemande->NOTE_DEV_ID))
+                    ->setFeatNoteHl($this->getNewNote($p_gic_id->NOTE_ASSISTANCE_ID))
+                    ->setStaId($status[$rowDemande->ETAT])
                     ->setFeatTs($rowDemande->DATE_ETAT)
+                    ->setFeatTo($featTo)
+                    ->setFeatShort($rowDemande->TEXTE_PUBLIC)
+                    ->setFeatPublic($rowDemande->PUBLIC)
+                    ->setFeatMail($rowDemande->ENVOI_MAIL)
+                    ->setFeatComm($comm)
+                    ->setFeatCommPriv($rowDemande->TEXTE_PRIVE)
+                    ->setFeatPlanForm($rowDemande->DATE_PLANIFICATION)
+                    ->setFeatWorkload($rowDemande->CHARGE_ESTIMEE)
+                    ->setNovaId($rowDemande->NOVATIME_ID)
                 ;
                 if (!$feat->create()) {
                     var_export($feat->getErrors());
                     die('ERROR');
                 }
+
+                /**
+                 * Import des Suivis de demandes
+                */
+                $queryDecisions->bindParam(":demandeId",$rowDemande->DEMANDE_ID);
+                $queryDecision->execute();
+                while ($rowDecision = $queryDecisions->fetch(\PDO::FETCH_OBJ)) {
+
+                    $featHisto = new \FreePM\Model\FeatureHisto();
+                    $featHisto
+                    ->setFeatId($feat->getFeatId)
+                    ->setFeathTs($rowDecision->DATE_ETAT)
+                    ->setStaId($status[$rowDecision->ETAT])
+                    ->setFeathComm($rowDecision->REMARQUE)
+                    ;
+
+                    if (!$featHisto->create()) {
+                        var_export($featHisto->getErrors());
+                        die('ERROR');
+                    }
+                }
+
+
             }
 
             $p_output->write("Fin de l'import GIC Demandes", true);
+    }
+
+    /**
+     * Get Priority Issue
+     *
+     * @param mixed $p_gic_id   Identifiant GIC
+     *
+     * @return String
+     */
+    protected function getPriorityIssue($p_gic_id)
+    {
+        $prioritys[1] = 'MINOR';    // Bénin
+        $prioritys[2] = 'ANNOYING'; // Gênant
+        $prioritys[3] = 'CRITICAL'; // Bloquant
+
+        if (array_key_exists($p_gic_id, $prioritys)) {
+            return $prioritys[$p_gic_id];
+        }
+        return 'NONE';
     }
 
     /**
@@ -433,43 +783,142 @@ class Import
             $sso      = \FreeFW\DI\DI::getShared('sso');
             $brokerId = $sso->getBrokerId();
             $p_output->write("Broker : " . $brokerId, true);
-            $cnxGIC = new \FreeFW\Storage\PDO\Mysql('mysql:host=host.docker.internal;dbname=GIC;charset=utf8;', 'root', 'm0n1c4po');
+            $cnxGIC = new \FreeFW\Storage\PDO\Mysql('mysql:host=host.docker.internal;dbname=GIC;charset=utfis8;', 'root', 'm0n1c4po');
             $storage = \FreeFW\DI\DI::getShared('Storage::default');
             $cnxWebBO = $storage->getProvider();
             if ($brokerId != '4') {
                 die('Wrong brokerId !');
             }
 
-            $query = $cnxWebBO->exec("DELETE FROM pm_issue");
-            $query = $cnxWebBO->exec("DELETE FROM pm_issue_histo");
+            /**
+             * Suppression des données
+             */
+            $this->removePmIssues($cnxWebBO);
 
-            $demandes = [];
-            $demandes = $cnxGIC->prepare("SELECT * FROM T_INCIDENT");
-            $queryProject = $cnxWebBO->prepare("SELECT prj_id FROM pm_project WHERE prj_code = :codePrj");
-            $queryDemandes->execute();
-            while ($rowDemande = $demandes->fetch(\PDO::FETCH_OBJ)) {
-                /**
-                 * @var \FreeSSO\Model\Features $feature
-                 */
+            /**
+             * Chargement des données en mémoire
+             */
+            $this->loadInMemory($cnxWebBO);
 
-                /** On recherche l'Id de l'application (du project) **/
-                $codeProject = $rowDemande->APP_CODE;
-                $queryProject->bindParam(":codePrj",$codeProject);
-                $queryProject->execute();
-                $prjId = $queryProject->fetchColumn();
-                /** On recherche l'Id de l'application (du project) **/
-
-                //$feature = \FreeFW\DI\DI::get('FreePM::Model::Feature');
-                $feat = new \FreePM\Model\Feature();
-                $feat
-                ->setBrkId($broker_id)
-                ->setGrpId(5)
-                ->setPrjId($rowDemande->DEV_APPLICATION_ID)
-                ->setFeatTs($rowDemande->)
+            /**
+             * Import des Catégories d'incident pour les projets
+             */
+            $prjCatIsss = [];
+            $queryRubriques = $cnxGIC->prepare("SELECT R.*, A.CODE APP_CODE FROM T_RUBRIQUE R
+                                                JOIN T_DEV_APPLICATION A ON A.DEV_APPLICATION_ID = R.DEV_APPLICATION_ID AND UPPER(A.CODE) IN ('OMEGA','ICLIENT','GIC')"
+                                               );
+            $queryRubriques->execute();
+            while ($rowRubrique = $queryRubriques->fetch(\PDO::FETCH_OBJ)) {
+                $prjCatIss = new \FreePM\Model\ProjectCategoryIssue();
+                $prjCatIss
+                ->setPrjId($this->getNewProjectId($rowRubrique->APP_CODE))
+                ->setPrjciName($rowRubrique->LIBELLE)
                 ;
-                if (!$feat->create()) {
-                    var_export($feat->getErrors());
+                if (!$prjCatIss->create()) {
+                    var_export($prjCatIss->getErrors());
                     die('ERROR');
+                }
+                $prjCatIsss[$rowRubrique->RUBRIQUE_ID] = $prjCatIss->getPrjciId();
+            }
+
+            /**
+             * Import des Catégories d'incident
+             */
+            $categorys = [];
+            $queryCatIncidents = $cnxGIC->prepare("SELECT * FROM T_CATEGORIE_INCIDENT WHERE FIN IS NULL");
+            $queryCatIncidents->execute();
+            while ($rowCatIncident = $queryCatIncidents->fetch(\PDO::FETCH_OBJ)) {
+                $issCat = new \FreePM\Model\IssueCategory();
+                $issCat
+                    ->setIsscName($rowCatIncident->LIBELLE)
+                ;
+
+                if (!$issCat->create()) {
+                    var_export($issCat->getErrors());
+                    die('ERROR');
+                }
+                $categorys[$rowCatIncident->CATEGORIE_INCIDENT_ID] = $issCat->getIsscId();
+            }
+
+            /**
+             * Import des Incidents
+             */
+            $typeclientFilter = [2, 4, 13];
+            $queryIncidents = $cnxGIC->prepare("SELECT I.*, A.CODE APP_CODE
+                                          FROM T_INCIDENT I
+                                          JOIN T_CLIENT C ON C.CLIENT_ID = I.CLIENT_ID AND C.TYPE_CLIENT_ID IN (" . implode(",", $typeclientFilter) . ")
+                                          JOIN T_DEV_APPLICATION A ON A.DEV_APPLICATION_ID = D.DEV_APPLICATION_ID AND UPPER(A.CODE) IN ('OMEGA','ICLIENT','GIC')
+                                          WHERE I.APPARUTION_LE >= '2015-01-01'");
+            $queryInterventions = $cnxGIC->prepare("SELECT * FROM T_INTERVENTION WHERE INCIDENT_ID = :incidentId");
+            /** Etats des incidents ou des interventions **/
+            $status['I'] = 'WAIT_JVS';
+            $status['C'] = 'WAIT_USER';
+            $status['A'] = 'WAIT_CLOSE';
+            $status['E'] = 'CLOSE_USER';
+            $status['F'] = 'CLOSE_JVS';
+
+            /** Sens des interventions **/
+            $way['C'] = 'IN';
+            $way['J'] = 'OUT';
+
+            $queryIncidents->execute();
+            while ($rowIncident = $queryIncidents->fetch(\PDO::FETCH_OBJ)) {
+                /**
+                 * @var \FreeSSO\Model\Issue $issue
+                 */
+                //$iss = \FreeFW\DI\DI::get('FreePM::Model::Issue');
+                $iss = new \FreePM\Model\Issue();
+                $iss
+                  ->setGrpId($this->getNewGroupId($rowIncident->CLIENT_ID))
+                  ->setPrjId($this->getNewProjectId($rowRubrique->APP_CODE))
+                  ->setIsscId($categorys[$rowIncident->CATEGORIE_INCIDENT_ID])
+                  ->setPrjciId($prjCatIsss[$rowIncident->RUBRIQUE_ID])
+                  ->setIssFrom($rowIncident->APPARUTION_LE)
+                  ->setIssDeadline($rowIncident->REPONSE_LE)
+                  ->setIssTs($rowIncident->INTERVENTION_LE)
+                  ->setUserId($this->getNewUserId($rowIncident->INT_APPEL_ID))
+                  ->setUserJvsId($this->getNewUserId($rowIncident->JVS_APPEL_ID))
+                  ->setIssPriority($this->getPriorityIssue($rowIncident->PRIORITE_ID))
+                  ->setIssNbCall($rowIncident->NB_APPEL)
+                  ->setIssStatus($status[$rowIncident->ETAT_COURANT])
+                  ->setCurrentUserId($this->getNewUserId($rowIncident->INT_COURANT_ID))
+                  ->setCurrentUserJvsId($this->getNewUserId($rowIncident->JVS_COURANT_ID))
+                  ->setCloseUserId($this->getNewUserId($rowIncident->FERME_PAR_INTE_ID))
+                  ->setCloseUserJvsId($this->getNewUserId($rowIncident->FERME_PAR_JVS_ID))
+                  ->setFeature($rowIncident->DEMANDE)
+                ;
+                if (!$iss->create()) {
+                    var_export($iss->getErrors());
+                    die('ERROR');
+                }
+
+                /**
+                 * Import des Interventions
+                 */
+                $queryInterventions->bindParam(":incidentId",$rowIncident->INCIDENT_ID);
+                $queryInterventions->execute();
+                while ($rowIntervention = $queryInterventions->fetch(\PDO::FETCH_OBJ)) {
+                    $issHisto = new \FreePM\Model\IssueHisto();
+                    $issHisto
+                      ->setIsshId($iss->getIssId)
+                      ->setIsshFrom($rowIntervention->DATE_DEBUT_INTERVENTION)
+                      ->setIsshDeadline($rowIntervention->REPONSE_LE)
+                      ->setIsshTo($rowIntervention->DATE_FIN_INTERVENTION)
+                      ->setUserId($this->getNewUserId($rowIncident->INTE_APPEL_ID))
+                      ->setUserJvsId($this->getNewUserId($rowIncident->JVS_APPEL_ID))
+                      ->setNextUserJvsId($this->getNewUserId($rowIncident->TRANSFERT_APPEL_ID))
+                      ->setIsshDuration(($rowIntervention->DUREE_H * 60) + $rowIntervention->DUREE_M)
+                      ->setIsshStatus($status[$rowIntervention->ETAT_COURANT])
+                      ->setIsshComm($rowIntervention->TEXTE_PUBLIC)
+                      ->setIsshCommPriv($rowIntervention->TEXTE_PRIVE)
+                      ->setIsshMail($rowIntervention->ENVOI_MAIL)
+                      ->setIsshWay($way[$rowIntervention->SENS])
+                    ;
+
+                    if (!$issHisto->create()) {
+                        var_export($issHisto->getErrors());
+                        die('ERROR');
+                    }
                 }
             }
 

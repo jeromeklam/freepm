@@ -64,30 +64,30 @@ abstract class Issue extends \FreeFW\Core\StorageModel
             ]
         ],
     ];
-    protected static $PRP_JVS_USER_ID = [
-        FFCST::PROPERTY_PRIVATE => 'jvs_user_id',
+    protected static $PRP_USER_JVS_ID = [
+        FFCST::PROPERTY_PRIVATE => 'user_jvs_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => 'Identifiant de l\'interlocuteur JVS qui a reçu l\'incident',
         FFCST::PROPERTY_SAMPLE  => 20,
-        FFCST::PROPERTY_FK      => ['jvs_user_id' =>
+        FFCST::PROPERTY_FK      => ['user_jvs_id' =>
             [
                 FFCST::FOREIGN_MODEL => 'NS::Model::ModelName',
-                FFCST::FOREIGN_FIELD => 'jvs_user_id',
+                FFCST::FOREIGN_FIELD => 'user_jvs_id',
                 FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
             ]
         ],
     ];
-    protected static $PRP_JVS_CURRENT_USER_ID = [
-        FFCST::PROPERTY_PRIVATE => 'jvs_current_user_id',
+    protected static $PRP_CURRENT_USER_JVS_ID = [
+        FFCST::PROPERTY_PRIVATE => 'current_user_jvs_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => 'Identifiant de l\'interlocuteur JVS courant',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['jvs_current_user_id' =>
+        FFCST::PROPERTY_FK      => ['current_user_jvs_id' =>
             [
                 FFCST::FOREIGN_MODEL => 'NS::Model::ModelName',
-                FFCST::FOREIGN_FIELD => 'jvs_current_user_id',
+                FFCST::FOREIGN_FIELD => 'current_user_jvs_id',
                 FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
             ]
         ],
@@ -106,16 +106,16 @@ abstract class Issue extends \FreeFW\Core\StorageModel
             ]
         ],
     ];
-    protected static $PRP_CLOSE_JVS_USER_ID = [
-        FFCST::PROPERTY_PRIVATE => 'close_jvs_user_id',
+    protected static $PRP_CLOSE_USER_JVS_ID = [
+        FFCST::PROPERTY_PRIVATE => 'close_user_jvs_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => 'Identifiant de l\'interlocuteur JVS qui a fermé l\'incident',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['close_jvs_user_id' =>
+        FFCST::PROPERTY_FK      => ['close_user_jvs_id' =>
             [
                 FFCST::FOREIGN_MODEL => 'NS::Model::ModelName',
-                FFCST::FOREIGN_FIELD => 'close_jvs_user_id',
+                FFCST::FOREIGN_FIELD => 'close_user_jvs_id',
                 FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
             ]
         ],
@@ -208,8 +208,8 @@ abstract class Issue extends \FreeFW\Core\StorageModel
     ];
     protected static $PRP_ISS_PRIORITY = [
         FFCST::PROPERTY_PRIVATE => 'iss_priority',
-        FFCST::PROPERTY_ENUM    => ['MINOR','ANNOYING','CRITICAL'],
-        FFCST::PROPERTY_DEFAULT => 'CRITICAL',
+        FFCST::PROPERTY_ENUM    => ['NONE','MINOR','ANNOYING','CRITICAL'],
+        FFCST::PROPERTY_DEFAULT => 'MINOR',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_SELECT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED],
         FFCST::PROPERTY_COMMENT => 'Priorité Bénin, Gênant, Bloquant',
@@ -241,11 +241,11 @@ abstract class Issue extends \FreeFW\Core\StorageModel
             'iss_id'              => self::$PRP_ISS_ID,
             'grp_id'              => self::$PRP_GRP_ID,
             'user_id'             => self::$PRP_USER_ID,
+            'user_jvs_id'         => self::$PRP_USER_JVS_ID,
             'current_user_id'     => self::$PRP_CURRENT_USER_ID,
-            'jvs_user_id'         => self::$PRP_JVS_USER_ID,
-            'jvs_current_user_id' => self::$PRP_JVS_CURRENT_USER_ID,
+            'current_user_jvs_id' => self::$PRP_CURRENT_USER_JVS_ID,
             'close_user_id'       => self::$PRP_CLOSE_USER_ID,
-            'close_jvs_user_id'   => self::$PRP_CLOSE_JVS_USER_ID,
+            'close_user_jvs_id'   => self::$PRP_CLOSE_USER_JVS_ID,
             'prj_id'              => self::$PRP_PRJ_ID,
             'issc_id'             => self::$PRP_ISSC_ID,
             'prjci_id'            => self::$PRP_PRJCI_ID,

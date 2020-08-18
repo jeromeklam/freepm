@@ -34,10 +34,17 @@ abstract class Feature extends \FreePM\Model\StorageModel\Feature
     protected $prj_id = null;
 
     /**
-     * prjv_id
+     * from_prjv_id
      * @var int
      */
-    protected $prjv_id = null;
+    protected $from_prjv_id = null;
+
+    /**
+     * to_prjv_id
+     * @var int
+     */
+    protected $to_prjv_id = null;
+
 
     /**
      * user_id
@@ -46,10 +53,10 @@ abstract class Feature extends \FreePM\Model\StorageModel\Feature
     protected $user_id = null;
 
     /**
-     * jvs_user_id
+     * user_jvs_id
      * @var int
      */
-    protected $jvs_user_id = null;
+    protected $user_jvs_id = null;
 
     /**
      * sta_id
@@ -258,26 +265,49 @@ abstract class Feature extends \FreePM\Model\StorageModel\Feature
     }
 
     /**
-     * Set prjv_id
+     * Set from_prjv_id
      *
      * @param int $p_value
      *
      * @return \FreePM\Model\Feature
      */
-    public function setPrjvId($p_value)
+    public function setFromPrjvId($p_value)
     {
-        $this->prjv_id = $p_value;
+        $this->from_prjv_id = $p_value;
         return $this;
     }
 
     /**
-     * Get prjv_id
+     * Get from_prjv_id
      *
      * @return int
      */
-    public function getPrjvId()
+    public function getFromPrjvId()
     {
-        return $this->prjv_id;
+        return $this->from_prjv_id;
+    }
+
+    /**
+     * Set to_prjv_id
+     *
+     * @param int $p_value
+     *
+     * @return \FreePM\Model\Feature
+     */
+    public function setToPrjvId($p_value)
+    {
+        $this->to_prjv_id = $p_value;
+        return $this;
+    }
+
+    /**
+     * Get to_prjv_id
+     *
+     * @return int
+     */
+    public function getToPrjvId()
+    {
+        return $this->to_prjv_id;
     }
 
     /**
@@ -304,26 +334,26 @@ abstract class Feature extends \FreePM\Model\StorageModel\Feature
     }
 
     /**
-     * Set jvs_user_id
+     * Set user_jvs_id
      *
      * @param int $p_value
      *
      * @return \FreePM\Model\Feature
      */
-    public function setJvsUserId($p_value)
+    public function setUserJvsId($p_value)
     {
-        $this->jvs_user_id = $p_value;
+        $this->user_jvs_id = $p_value;
         return $this;
     }
 
     /**
-     * Get jvs_user_id
+     * Get user_jvs_id
      *
      * @return int
      */
-    public function getJvsUserId()
+    public function getUserJvsId()
     {
-        return $this->jvs_user_id;
+        return $this->user_jvs_id;
     }
 
     /**

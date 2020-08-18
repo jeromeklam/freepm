@@ -28,16 +28,16 @@ abstract class IssueHisto extends \FreePM\Model\StorageModel\IssueHisto
     protected $user_id = null;
 
     /**
-     * jvs_user_id
+     * user_jvs_id
      * @var int
      */
-    protected $jvs_user_id = null;
+    protected $user_jvs_id = null;
 
     /**
-     * jvs_next_user_id
+     * next_user_jvs_id
      * @var int
      */
-    protected $jvs_next_user_id = null;
+    protected $next_user_jvs_id = null;
 
     /**
      * issh_from
@@ -163,49 +163,49 @@ abstract class IssueHisto extends \FreePM\Model\StorageModel\IssueHisto
     }
 
     /**
-     * Set jvs_user_id
+     * Set user_jvs_id
      *
      * @param int $p_value
      *
      * @return \FreePM\Model\IssueHisto
      */
-    public function setJvsUserId($p_value)
+    public function setUserJvsId($p_value)
     {
-        $this->jvs_user_id = $p_value;
+        $this->user_jvs_id = $p_value;
         return $this;
     }
 
     /**
-     * Get jvs_user_id
+     * Get user_jvs_id
      *
      * @return int
      */
-    public function getJvsUserId()
+    public function getUserJvsId()
     {
-        return $this->jvs_user_id;
+        return $this->user_jvs_id;
     }
 
     /**
-     * Set jvs_next_user_id
+     * Set next_user_jvs_id
      *
      * @param int $p_value
      *
      * @return \FreePM\Model\IssueHisto
      */
-    public function setJvsNextUserId($p_value)
+    public function setNextUserJvsId($p_value)
     {
-        $this->jvs_next_user_id = $p_value;
+        $this->next_user_jvs_id = $p_value;
         return $this;
     }
 
     /**
-     * Get jvs_next_user_id
+     * Get next_user_jvs_id
      *
      * @return int
      */
-    public function getJvsNextUserId()
+    public function getNextUserJvsId()
     {
-        return $this->jvs_next_user_id;
+        return $this->next_user_jvs_id;
     }
 
     /**

@@ -57,16 +57,30 @@ abstract class Feature extends \FreeFW\Core\StorageModel
             ]
         ],
     ];
-    protected static $PRP_PRJV_ID = [
-        FFCST::PROPERTY_PRIVATE => 'prjv_id',
+    protected static $PRP_FROM_PRJV_ID = [
+        FFCST::PROPERTY_PRIVATE => 'from_prjv_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_FK],
-        FFCST::PROPERTY_COMMENT => 'Identifiant de la version du projet',
+        FFCST::PROPERTY_COMMENT => 'Identifiant de la version du projet de la demande',
         FFCST::PROPERTY_SAMPLE  => 123,
         FFCST::PROPERTY_FK      => ['project_version' =>
             [
                 FFCST::FOREIGN_MODEL => 'NS::Model::ProjectVersion',
-                FFCST::FOREIGN_FIELD => 'prjv_id',
+                FFCST::FOREIGN_FIELD => 'from_prjv_id',
+                FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
+            ]
+        ],
+    ];
+    protected static $PRP_TO_PRJV_ID = [
+        FFCST::PROPERTY_PRIVATE => 'to_prjv_id',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_FK],
+        FFCST::PROPERTY_COMMENT => 'Identifiant de la version de réalisation de la demande',
+        FFCST::PROPERTY_SAMPLE  => 123,
+        FFCST::PROPERTY_FK      => ['project_version' =>
+            [
+                FFCST::FOREIGN_MODEL => 'NS::Model::ProjectVersion',
+                FFCST::FOREIGN_FIELD => 'to_prjv_id',
                 FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
             ]
         ],
@@ -85,13 +99,13 @@ abstract class Feature extends \FreeFW\Core\StorageModel
             ]
         ],
     ];
-    protected static $PRP_JVS_USER_ID = [
-        FFCST::PROPERTY_PRIVATE => 'jvs_user_id',
+    protected static $PRP_USER_JVS_ID = [
+        FFCST::PROPERTY_PRIVATE => 'user_jvs_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_FK],
         FFCST::PROPERTY_COMMENT => 'Identifiant de la personne qui va traité la demande',
         FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['jvs_user_id' =>
+        FFCST::PROPERTY_FK      => ['user_jvs_id' =>
             [
                 FFCST::FOREIGN_MODEL => 'NS::Model::User',
                 FFCST::FOREIGN_FIELD => 'user_id',
@@ -180,10 +194,11 @@ abstract class Feature extends \FreeFW\Core\StorageModel
     ];
     protected static $PRP_FEAT_PUBLIC = [
         FFCST::PROPERTY_PRIVATE => 'feat_public',
-        FFCST::PROPERTY_TYPE    => FFCST::TYPE_INTEGER,
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BOOLEAN,
+        FFCST::PROPERTY_DEFAULT => true,
         FFCST::PROPERTY_OPTIONS => [],
-        FFCST::PROPERTY_COMMENT => '',
-        FFCST::PROPERTY_SAMPLE  => 123,
+        FFCST::PROPERTY_COMMENT => 'Demande visible depuis les clients',
+        FFCST::PROPERTY_SAMPLE  => true,
     ];
     protected static $PRP_FEAT_COMM = [
         FFCST::PROPERTY_PRIVATE => 'feat_comm',
@@ -208,10 +223,11 @@ abstract class Feature extends \FreeFW\Core\StorageModel
     ];
     protected static $PRP_FEAT_MAIL = [
         FFCST::PROPERTY_PRIVATE => 'feat_mail',
-        FFCST::PROPERTY_TYPE    => FFCST::TYPE_INTEGER,
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BOOLEAN,
+        FFCST::PROPERTY_DEFAULT => true,
         FFCST::PROPERTY_OPTIONS => [],
         FFCST::PROPERTY_COMMENT => 'Envoi d\'un mail',
-        FFCST::PROPERTY_SAMPLE  => 123,
+        FFCST::PROPERTY_SAMPLE  => true,
     ];
     protected static $PRP_NOVA_ID = [
         FFCST::PROPERTY_PRIVATE => 'nova_id',
@@ -267,7 +283,7 @@ abstract class Feature extends \FreeFW\Core\StorageModel
             'prj_id'         => self::$PRP_PRJ_ID,
             'prjv_id'        => self::$PRP_PRJV_ID,
             'user_id'        => self::$PRP_USER_ID,
-            'jvs_user_id'    => self::$PRP_JVS_USER_ID,
+            'user_jvs_id'    => self::$PRP_USER_JVS_ID,
             'sta_id'         => self::$PRP_STA_ID,
             'feat_parent_id' => self::$PRP_FEAT_PARENT_ID,
             'feat_short'     => self::$PRP_FEAT_SHORT,
