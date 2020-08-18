@@ -8,7 +8,7 @@ use \FreeFW\Constants as FFCST;
  *
  * @author jeromeklam
  */
-abstract class Feature extends \FreePM\Model\StorageModel\Base
+abstract class Feature extends \FreeFW\Core\StorageModel
 {
 
     /**
@@ -37,7 +37,7 @@ abstract class Feature extends \FreePM\Model\StorageModel\Base
         FFCST::PROPERTY_SAMPLE  => 123,
         FFCST::PROPERTY_FK      => ['group' =>
             [
-                FFCST::FOREIGN_MODEL => 'FreeSSO::Model::Group',
+                FFCST::FOREIGN_MODEL => 'NS::Model::Group',
                 FFCST::FOREIGN_FIELD => 'grp_id',
                 FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
             ]
@@ -47,65 +47,142 @@ abstract class Feature extends \FreePM\Model\StorageModel\Base
         FFCST::PROPERTY_PRIVATE => 'prj_id',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
         FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
-        FFCST::PROPERTY_COMMENT => '',
+        FFCST::PROPERTY_COMMENT => 'Identifiant du projet',
         FFCST::PROPERTY_SAMPLE  => 123,
         FFCST::PROPERTY_FK      => ['project' =>
             [
-                FFCST::FOREIGN_MODEL => 'FreePM::Model::Project',
+                FFCST::FOREIGN_MODEL => 'NS::Model::Project',
                 FFCST::FOREIGN_FIELD => 'prj_id',
                 FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
             ]
         ],
     ];
-    protected static $PRP_FEAT_TS = [
-        FFCST::PROPERTY_PRIVATE => 'feat_ts',
-        FFCST::PROPERTY_TYPE    => FFCST::TYPE_DATETIMETZ,
-        FFCST::PROPERTY_OPTIONS => [],
-        FFCST::PROPERTY_COMMENT => '',
-        FFCST::PROPERTY_SAMPLE  => '',
+    protected static $PRP_FROM_PRJV_ID = [
+        FFCST::PROPERTY_PRIVATE => 'from_prjv_id',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_FK],
+        FFCST::PROPERTY_COMMENT => 'Identifiant de la version du projet de la demande',
+        FFCST::PROPERTY_SAMPLE  => 123,
+        FFCST::PROPERTY_FK      => ['project_version' =>
+            [
+                FFCST::FOREIGN_MODEL => 'NS::Model::ProjectVersion',
+                FFCST::FOREIGN_FIELD => 'from_prjv_id',
+                FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
+            ]
+        ],
+    ];
+    protected static $PRP_TO_PRJV_ID = [
+        FFCST::PROPERTY_PRIVATE => 'to_prjv_id',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_FK],
+        FFCST::PROPERTY_COMMENT => 'Identifiant de la version de réalisation de la demande',
+        FFCST::PROPERTY_SAMPLE  => 123,
+        FFCST::PROPERTY_FK      => ['project_version' =>
+            [
+                FFCST::FOREIGN_MODEL => 'NS::Model::ProjectVersion',
+                FFCST::FOREIGN_FIELD => 'to_prjv_id',
+                FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
+            ]
+        ],
+    ];
+    protected static $PRP_USER_ID = [
+        FFCST::PROPERTY_PRIVATE => 'user_id',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_FK],
+        FFCST::PROPERTY_COMMENT => 'Identifiant de l\'utilisateur qui a initié la demande',
+        FFCST::PROPERTY_SAMPLE  => 123,
+        FFCST::PROPERTY_FK      => ['user' =>
+            [
+                FFCST::FOREIGN_MODEL => 'NS::Model::User',
+                FFCST::FOREIGN_FIELD => 'user_id',
+                FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
+            ]
+        ],
+    ];
+    protected static $PRP_USER_JVS_ID = [
+        FFCST::PROPERTY_PRIVATE => 'user_jvs_id',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_FK],
+        FFCST::PROPERTY_COMMENT => 'Identifiant de la personne qui va traité la demande',
+        FFCST::PROPERTY_SAMPLE  => 123,
+        FFCST::PROPERTY_FK      => ['user_jvs_id' =>
+            [
+                FFCST::FOREIGN_MODEL => 'NS::Model::User',
+                FFCST::FOREIGN_FIELD => 'user_id',
+                FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
+            ]
+        ],
+    ];
+    protected static $PRP_STA_ID = [
+        FFCST::PROPERTY_PRIVATE => 'sta_id',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
+        FFCST::PROPERTY_COMMENT => 'Identifiant de l\'état',
+        FFCST::PROPERTY_SAMPLE  => 123,
+        FFCST::PROPERTY_FK      => ['status' =>
+            [
+                FFCST::FOREIGN_MODEL => 'NS::Model::Status',
+                FFCST::FOREIGN_FIELD => 'sta_id',
+                FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
+            ]
+        ],
+    ];
+    protected static $PRP_FEAT_PARENT_ID = [
+        FFCST::PROPERTY_PRIVATE => 'feat_parent_id',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_FK],
+        FFCST::PROPERTY_COMMENT => 'Identifiant du travail parent',
+        FFCST::PROPERTY_SAMPLE  => 123,
+        FFCST::PROPERTY_FK      => ['parent' =>
+            [
+                FFCST::FOREIGN_MODEL => 'NS::Model::Feature',
+                FFCST::FOREIGN_FIELD => 'feat_id',
+                FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
+            ]
+        ],
     ];
     protected static $PRP_FEAT_SHORT = [
         FFCST::PROPERTY_PRIVATE => 'feat_short',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_STRING,
         FFCST::PROPERTY_OPTIONS => [],
-        FFCST::PROPERTY_COMMENT => '',
+        FFCST::PROPERTY_COMMENT => 'Libellé',
         FFCST::PROPERTY_MAX     => 255,
         FFCST::PROPERTY_SAMPLE  => '',
     ];
     protected static $PRP_FEAT_DESC = [
         FFCST::PROPERTY_PRIVATE => 'feat_desc',
-        FFCST::PROPERTY_TYPE    => FFCST::TYPE_TEXT,
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BLOB,
         FFCST::PROPERTY_OPTIONS => [],
-        FFCST::PROPERTY_COMMENT => '',
+        FFCST::PROPERTY_COMMENT => 'Description',
+        FFCST::PROPERTY_SAMPLE  => '',
+    ];
+    protected static $PRP_FEAT_TS = [
+        FFCST::PROPERTY_PRIVATE => 'feat_ts',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_DATETIMETZ,
+        FFCST::PROPERTY_OPTIONS => [],
+        FFCST::PROPERTY_COMMENT => 'Date de modification',
         FFCST::PROPERTY_SAMPLE  => '',
     ];
     protected static $PRP_FEAT_FROM = [
         FFCST::PROPERTY_PRIVATE => 'feat_from',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_DATETIMETZ,
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED],
+        FFCST::PROPERTY_COMMENT => 'Date de création',
+        FFCST::PROPERTY_SAMPLE  => '',
+    ];
+    protected static $PRP_FEAT_DEADLINE = [
+        FFCST::PROPERTY_PRIVATE => 'feat_deadline',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_DATETIMETZ,
         FFCST::PROPERTY_OPTIONS => [],
-        FFCST::PROPERTY_COMMENT => '',
+        FFCST::PROPERTY_COMMENT => 'Date d\'échéance',
         FFCST::PROPERTY_SAMPLE  => '',
     ];
     protected static $PRP_FEAT_TO = [
         FFCST::PROPERTY_PRIVATE => 'feat_to',
         FFCST::PROPERTY_TYPE    => FFCST::TYPE_DATETIMETZ,
         FFCST::PROPERTY_OPTIONS => [],
-        FFCST::PROPERTY_COMMENT => '',
+        FFCST::PROPERTY_COMMENT => 'Date de fin (réalisation - refus - rejet)',
         FFCST::PROPERTY_SAMPLE  => '',
-    ];
-    protected static $PRP_STA_ID = [
-        FFCST::PROPERTY_PRIVATE => 'sta_id',
-        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BIGINT,
-        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED, FFCST::OPTION_FK],
-        FFCST::PROPERTY_COMMENT => '',
-        FFCST::PROPERTY_SAMPLE  => 123,
-        FFCST::PROPERTY_FK      => ['status' =>
-            [
-                FFCST::FOREIGN_MODEL => 'FreePM::Model::Status',
-                FFCST::FOREIGN_FIELD => 'sta_id',
-                FFCST::FOREIGN_TYPE  => \FreeFW\Model\Query::JOIN_LEFT,
-            ]
-        ],
     ];
     protected static $PRP_FEAT_PRIORITY = [
         FFCST::PROPERTY_PRIVATE => 'feat_priority',
@@ -114,6 +191,82 @@ abstract class Feature extends \FreePM\Model\StorageModel\Base
         FFCST::PROPERTY_COMMENT => 'Priorité, de 1 à 9, 9 étant le moins important',
         FFCST::PROPERTY_DEFAULT => 9,
         FFCST::PROPERTY_SAMPLE  => 3,
+    ];
+    protected static $PRP_FEAT_PUBLIC = [
+        FFCST::PROPERTY_PRIVATE => 'feat_public',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BOOLEAN,
+        FFCST::PROPERTY_DEFAULT => true,
+        FFCST::PROPERTY_OPTIONS => [],
+        FFCST::PROPERTY_COMMENT => 'Demande visible depuis les clients',
+        FFCST::PROPERTY_SAMPLE  => true,
+    ];
+    protected static $PRP_FEAT_COMM = [
+        FFCST::PROPERTY_PRIVATE => 'feat_comm',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BLOB,
+        FFCST::PROPERTY_OPTIONS => [],
+        FFCST::PROPERTY_COMMENT => 'Commentaire (Motif du refus ou du rejet - Texte réalisation - Texte technique - Texte fonctionnel)',
+        FFCST::PROPERTY_SAMPLE  => '',
+    ];
+    protected static $PRP_FEAT_COMM_PRIV = [
+        FFCST::PROPERTY_PRIVATE => 'feat_comm_priv',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BLOB,
+        FFCST::PROPERTY_OPTIONS => [],
+        FFCST::PROPERTY_COMMENT => 'Commentaire privé',
+        FFCST::PROPERTY_SAMPLE  => '',
+    ];
+    protected static $PRP_FEAT_WORKLOAD = [
+        FFCST::PROPERTY_PRIVATE => 'feat_workload',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_INTEGER,
+        FFCST::PROPERTY_OPTIONS => [],
+        FFCST::PROPERTY_COMMENT => 'Charge estimée en Heure',
+        FFCST::PROPERTY_SAMPLE  => 123,
+    ];
+    protected static $PRP_FEAT_MAIL = [
+        FFCST::PROPERTY_PRIVATE => 'feat_mail',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_BOOLEAN,
+        FFCST::PROPERTY_DEFAULT => true,
+        FFCST::PROPERTY_OPTIONS => [],
+        FFCST::PROPERTY_COMMENT => 'Envoi d\'un mail',
+        FFCST::PROPERTY_SAMPLE  => true,
+    ];
+    protected static $PRP_NOVA_ID = [
+        FFCST::PROPERTY_PRIVATE => 'nova_id',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_INTEGER,
+        FFCST::PROPERTY_OPTIONS => [],
+        FFCST::PROPERTY_COMMENT => 'Identifiant du travail dans Novatime',
+        FFCST::PROPERTY_SAMPLE  => 123,
+    ];
+    protected static $PRP_FEAT_NOTE_DEV = [
+        FFCST::PROPERTY_PRIVATE => 'feat_note_dev',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_SELECT,
+        FFCST::PROPERTY_ENUM    => ['NONE','RISKY','IMPOSSIBLE','COMPLEX','STANDARD'],
+        FFCST::PROPERTY_DEFAULT => 'NONE',
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED],
+        FFCST::PROPERTY_COMMENT => 'Note développement',
+        FFCST::PROPERTY_SAMPLE  => 'STANDARD',
+    ];
+    protected static $PRP_FEAT_NOTE_HL = [
+        FFCST::PROPERTY_PRIVATE => 'feat_note_hl',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_SELECT,
+        FFCST::PROPERTY_ENUM    => ['NONE','INCOHERENT','RECURRENT_LOW','RECURRENT_HIGH','LEGAL','INCORRECT_BEHAVIOUR','NOT_REPRODUCED_ERROR'],
+        FFCST::PROPERTY_DEFAULT => 'NONE',
+        FFCST::PROPERTY_OPTIONS => [FFCST::OPTION_REQUIRED],
+        FFCST::PROPERTY_COMMENT => 'Note Assistance',
+        FFCST::PROPERTY_SAMPLE  => 'LEGAL',
+    ];
+    protected static $PRP_FEAT_PLAN_FORM = [
+        FFCST::PROPERTY_PRIVATE => 'feat_plan_form',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_DATETIMETZ,
+        FFCST::PROPERTY_OPTIONS => [],
+        FFCST::PROPERTY_COMMENT => 'Date de début de planification',
+        FFCST::PROPERTY_SAMPLE  => '',
+    ];
+    protected static $PRP_FEAT_PLAN_TO = [
+        FFCST::PROPERTY_PRIVATE => 'feat_plan_to',
+        FFCST::PROPERTY_TYPE    => FFCST::TYPE_DATETIMETZ,
+        FFCST::PROPERTY_OPTIONS => [],
+        FFCST::PROPERTY_COMMENT => 'Date de fin de planification',
+        FFCST::PROPERTY_SAMPLE  => '',
     ];
 
     /**
@@ -124,17 +277,32 @@ abstract class Feature extends \FreePM\Model\StorageModel\Base
     public static function getProperties()
     {
         return [
-            'feat_id'       => self::$PRP_FEAT_ID,
-            'brk_id'        => self::$PRP_BRK_ID,
-            'grp_id'        => self::$PRP_GRP_ID,
-            'prj_id'        => self::$PRP_PRJ_ID,
-            'feat_ts'       => self::$PRP_FEAT_TS,
-            'feat_short'    => self::$PRP_FEAT_SHORT,
-            'feat_desc'     => self::$PRP_FEAT_DESC,
-            'feat_from'     => self::$PRP_FEAT_FROM,
-            'feat_to'       => self::$PRP_FEAT_TO,
-            'sta_id'        => self::$PRP_STA_ID,
-            'feat_priority' => self::$PRP_FEAT_PRIORITY
+            'feat_id'        => self::$PRP_FEAT_ID,
+            'brk_id'         => self::$PRP_BRK_ID,
+            'grp_id'         => self::$PRP_GRP_ID,
+            'prj_id'         => self::$PRP_PRJ_ID,
+            'prjv_id'        => self::$PRP_PRJV_ID,
+            'user_id'        => self::$PRP_USER_ID,
+            'user_jvs_id'    => self::$PRP_USER_JVS_ID,
+            'sta_id'         => self::$PRP_STA_ID,
+            'feat_parent_id' => self::$PRP_FEAT_PARENT_ID,
+            'feat_short'     => self::$PRP_FEAT_SHORT,
+            'feat_desc'      => self::$PRP_FEAT_DESC,
+            'feat_ts'        => self::$PRP_FEAT_TS,
+            'feat_from'      => self::$PRP_FEAT_FROM,
+            'feat_deadline'  => self::$PRP_FEAT_DEADLINE,
+            'feat_to'        => self::$PRP_FEAT_TO,
+            'feat_priority'  => self::$PRP_FEAT_PRIORITY,
+            'feat_public'    => self::$PRP_FEAT_PUBLIC,
+            'feat_comm'      => self::$PRP_FEAT_COMM,
+            'feat_comm_priv' => self::$PRP_FEAT_COMM_PRIV,
+            'feat_workload'  => self::$PRP_FEAT_WORKLOAD,
+            'feat_mail'      => self::$PRP_FEAT_MAIL,
+            'nova_id'        => self::$PRP_NOVA_ID,
+            'feat_note_dev'  => self::$PRP_FEAT_NOTE_DEV,
+            'feat_note_hl'   => self::$PRP_FEAT_NOTE_HL,
+            'feat_plan_form' => self::$PRP_FEAT_PLAN_FORM,
+            'feat_plan_to'   => self::$PRP_FEAT_PLAN_TO
         ];
     }
 
@@ -178,11 +346,12 @@ abstract class Feature extends \FreePM\Model\StorageModel\Base
         return [
             'desk_cols' => [
                 FFCST::REL_MODEL   => 'FreePM::Model::DeskColFeature',
-                FFCST::REL_FIELD   => 'deco_id',
+                FFCST::REL_FIELD   => 'feat_id',
                 FFCST::REL_TYPE    => \FreeFW\Model\Query::JOIN_LEFT,
                 FFCST::REL_COMMENT => 'Les liens vers les kanbans',
                 FFCST::REL_REMOVE  => FFCST::REL_REMOVE_CASCADE
             ],
         ];
     }
+
 }

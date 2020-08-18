@@ -5,10 +5,20 @@ $localCommands = [
      * Routes FreePM
      * ########################################################################
      */
-    'freepm.gic.import' => [
-        'command'    => 'gic::import',
+    'freepm.beforeImport' => [
+        'command'    => '::beforeImport',
         'controller' => 'FreePM::Command::Import',
-        'function'   => 'import'
+        'function'   => 'beforeImport'
+    ],
+    'freepm.gic.importGIC' => [
+        'command'    => 'gic::importGIC',
+        'controller' => 'FreePM::Command::Import',
+        'function'   => 'importGIC'
+    ],
+    'freepm.bo.importBO' => [
+        'command'    => 'bo::importBO',
+        'controller' => 'FreePM::Command::Import',
+        'function'   => 'importBO'
     ],
 ];
 
